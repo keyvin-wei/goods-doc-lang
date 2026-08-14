@@ -20,3 +20,14 @@ deepseek:
   api:
     key: xxx
     url: https://api.deepseek.com
+
+hq:
+  lang:
+    ai:
+      aihubmixUrl: https://aihubmix.com
+      aihubmixKey: xxx
+      proxy: false
+      deepseekKey: xxx
+
+swagger:
+  enable: true

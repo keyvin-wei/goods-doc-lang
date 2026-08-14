@@ -1,4 +1,4 @@
-package com.hq.goods.lang.config;
+package com.hq.goods.lang.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class TranslatorProviderFactory {
 
-    @Value("${hq.nextpcb.ai.translation.provider:aihubmix}")
+    @Value("${hq.lang.ai.translation.provider:aihubmix}")
     private String providerName;
 
     @Autowired

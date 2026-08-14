@@ -1,10 +1,9 @@
-package com.hq.goods.lang.config;
+package com.hq.goods.lang.utils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.hq.goods.lang.bean.AddressConstant;
 import com.hq.goods.lang.bean.dto.AiMessageReq;
-import com.hq.goods.lang.utils.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,4 @@
-package com.hq.goods.lang.config;
+package com.hq.goods.lang.utils;
 
 /**
  * 翻译提供商接口

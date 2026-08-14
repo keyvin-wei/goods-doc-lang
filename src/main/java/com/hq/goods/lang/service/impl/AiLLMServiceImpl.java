@@ -6,12 +6,11 @@ import com.hq.goods.lang.bean.dto.AiTranslateDto;
 import com.hq.goods.lang.bean.entity.TranslationMemory;
 import com.hq.goods.lang.bean.entity.TranslationTerm;
 import com.hq.goods.lang.bean.vo.AiTranslateVo;
-import com.hq.goods.lang.config.TranslatorProviderFactory;
+import com.hq.goods.lang.utils.TranslatorProviderFactory;
 import com.hq.goods.lang.service.AiLLMService;
 import com.hq.goods.lang.service.TranslationService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -39,7 +38,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class AiLLMServiceImpl implements AiLLMService {
-    @Value("${hq.nextpcb.ai.translation.enhanced.enabled:true}")
+    @Value("${hq.lang.ai.translation.enhanced.enabled:true}")
     private boolean translationEnhancedEnabled;
 
     @Autowired

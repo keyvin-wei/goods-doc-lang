@@ -48,25 +48,25 @@ public class HttpUtil {
      * 阿波罗配置修改同步到属性
      * @param aihubmixUrl 阿波罗配置的aihubmixUrl
      */
-    @Value("${hq.nextpcb.ai.aihubmixUrl:https://aihubmix.com}")
+    @Value("${hq.lang.ai.aihubmixUrl:https://aihubmix.com}")
     public void setAihubmixUrl(String aihubmixUrl) {
         log.info("setAihubmixUrl: {}", aihubmixUrl);
         HttpUtil.aihubmixUrl = aihubmixUrl;
     }
 
-    @Value("${hq.nextpcb.ai.aihubmixKey}")
+    @Value("${hq.lang.ai.aihubmixKey}")
     public void setAihubmixKey(String aihubmixKey) {
         log.info("setAihubmixKey: {}", aihubmixKey);
         HttpUtil.aihubmixKey = aihubmixKey;
     }
 
-    @Value("${hq.nextpcb.ai.proxy:false}")
+    @Value("${hq.lang.ai.proxy:false}")
     public void setAiProxy(boolean aiProxy) {
         log.info("setAiProxy: {}", aiProxy);
         HttpUtil.aiProxy = aiProxy;
     }
 
-    @Value("${hq.nextpcb.ai.deepseekKey}")
+    @Value("${hq.lang.ai.deepseekKey}")
     public void setDeepseekKey(String deepseekKey) {
         log.info("setDeepseekKey: {}", deepseekKey);
         HttpUtil.deepseekKey = deepseekKey;

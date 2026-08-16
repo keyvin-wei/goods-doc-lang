@@ -29,5 +29,8 @@ hq:
       proxy: false
       deepseekKey: xxx
 
+mybatis-plus:
+  mapper-locations: classpath*:mappers/*.xml
+
 swagger:
   enable: true

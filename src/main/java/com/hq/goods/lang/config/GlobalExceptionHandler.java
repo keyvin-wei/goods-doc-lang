@@ -6,6 +6,7 @@ import com.hq.goods.lang.bean.ResultBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -78,6 +79,15 @@ public class GlobalExceptionHandler {
     public String methodNotSupportedHandler(HttpRequestMethodNotSupportedException e){
         log.error("请求方法异常！" + ResponseEnum.REQUEST_METHOD_ERROR.getMessage());
         return ResultBody.error(ResponseEnum.REQUEST_METHOD_ERROR.getCode());
+    }
+
+    /**
+     * JSON 反序列化异常处理（如 pinCount 传空串/非数字等字段类型不匹配）
+     */
+    @ExceptionHandler(value = HttpMessageNotReadableException.class)
+    public String httpMessageNotReadableExceptionHandler(HttpMessageNotReadableException e){
+        log.error("请求体反序列化异常，原因是：", e);
+        return ResultBody.error(ResponseEnum.PARAMETER_ERROR.getCode(), "请求参数格式错误");
     }
 
     /**

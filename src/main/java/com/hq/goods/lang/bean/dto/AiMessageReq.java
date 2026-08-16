@@ -5,13 +5,13 @@ import lombok.Data;
 @Data
 public class AiMessageReq {
     private String role;
-    private String constent;
+    private String content;
 
     public AiMessageReq() {
 
     }
-    public AiMessageReq(String role, String constent) {
+    public AiMessageReq(String role, String content) {
         this.role = role;
-        this.constent = constent;
+        this.content = content;
     }
 }

@@ -9,7 +9,10 @@ import org.junit.Test;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class GoodsDocParseUtilTest {
 
@@ -61,5 +64,50 @@ public class GoodsDocParseUtilTest {
         assertEquals("T", seo.get("en").getTitle());
         assertEquals(2, seo.get("en").getKeywords().size());
         assertEquals("描述", seo.get("zh").getDescription());
+    }
+
+    @Test
+    public void testToGoodsDocVoMalformed() {
+        GoodsDocVo vo = GoodsDocParseUtil.toGoodsDocVo("不是JSON{{{");
+        assertNotNull(vo);
+        assertNull(vo.getPartNumber());
+    }
+
+    @Test
+    public void testToGoodsDocVoBlank() {
+        GoodsDocVo vo = GoodsDocParseUtil.toGoodsDocVo("");
+        assertNotNull(vo);
+        assertNull(vo.getPartNumber());
+    }
+
+    @Test
+    public void testToGoodsDocVoPinCountSafe() {
+        assertEquals(Integer.valueOf(64), GoodsDocParseUtil.toGoodsDocVo("{\"pinCount\":64}").getPinCount());
+        assertEquals(Integer.valueOf(64), GoodsDocParseUtil.toGoodsDocVo("{\"pinCount\":\"64\"}").getPinCount());
+        assertNull(GoodsDocParseUtil.toGoodsDocVo("{\"pinCount\":\"64 pins\"}").getPinCount());
+    }
+
+    @Test
+    public void testToGoodsDocVoTypeDeviation() {
+        assertNull(GoodsDocParseUtil.toGoodsDocVo("{\"parameters\":{\"name\":\"Flash\",\"value\":\"64KB\"}}").getParameters());
+        assertNull(GoodsDocParseUtil.toGoodsDocVo("{\"parameters\":[\"Flash\",\"64KB\"]}").getParameters());
+    }
+
+    @Test
+    public void testValidateJson() {
+        GoodsDocParseUtil.validateJson("```json\n{\"partNumber\":\"A\"}\n```");
+        GoodsDocParseUtil.validateJson("以下是结果：{\"partNumber\":\"A\"} 完毕");
+    }
+
+    @Test(expected = CustomException.class)
+    public void testValidateJsonInvalid() {
+        GoodsDocParseUtil.validateJson("完全没有JSON");
+    }
+
+    @Test
+    public void testIsValidJson() {
+        assertTrue(GoodsDocParseUtil.isValidJson("{\"a\":1}"));
+        assertFalse(GoodsDocParseUtil.isValidJson("not json"));
+        assertFalse(GoodsDocParseUtil.isValidJson(""));
     }
 }

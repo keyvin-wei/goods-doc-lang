@@ -1,358 +1,431 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 外贸商品信息标准化与多语言 SEO 系统</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-               background: #f0f2f5; color: #333; padding: 20px; }
-        .container { max-width: 1100px; margin: 0 auto; }
-        h1 { text-align: center; color: #1a73e8; margin-bottom: 4px; font-size: 26px; }
-        .subtitle { text-align: center; color: #666; font-size: 14px; margin-bottom: 24px; }
-        .card { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 20px;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-        .input-row { display: flex; gap: 12px; align-items: center; }
-        .input-row input { flex: 1; padding: 12px 16px; font-size: 16px; border: 2px solid #ddd;
-                           border-radius: 8px; outline: none; transition: border-color 0.2s; }
-        .input-row input:focus { border-color: #1a73e8; }
-        .btn { padding: 12px 32px; font-size: 16px; border: none; border-radius: 8px;
-               cursor: pointer; font-weight: 600; transition: all 0.2s; }
-        .btn-primary { background: #1a73e8; color: #fff; }
-        .btn-primary:hover { background: #1557b5; }
-        .btn-primary:disabled { background: #a0c4ff; cursor: not-allowed; }
-        .btn-sample { background: #f0f2f5; color: #555; padding: 8px 16px; font-size: 13px; }
-        .btn-sample:hover { background: #e0e2e5; }
-        .samples { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
-        .samples span { color: #888; font-size: 13px; line-height: 32px; }
-        .progress { margin: 16px 0; }
-        .progress-step { display: flex; align-items: center; gap: 8px; padding: 6px 0; color: #888; font-size: 14px; }
-        .progress-step.active { color: #1a73e8; font-weight: 600; }
-        .progress-step.done { color: #34a853; }
-        .progress-step .icon { font-size: 18px; width: 24px; text-align: center; }
-        .progress-step .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid #ddd;
-                                   border-top-color: #1a73e8; border-radius: 50%; animation: spin 0.8s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .tab-bar { display: flex; gap: 0; border-bottom: 2px solid #eee; margin-bottom: 16px; flex-wrap: wrap; }
-        .tab { padding: 10px 20px; cursor: pointer; color: #666; font-weight: 500;
-               border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s;
-               white-space: nowrap; }
-        .tab.active { color: #1a73e8; border-bottom-color: #1a73e8; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        pre { background: #f8f9fa; border-radius: 8px; padding: 16px; overflow-x: auto;
-              font-size: 13px; line-height: 1.6; max-height: 500px; overflow-y: auto; }
-        .topk-item { display: flex; justify-content: space-between; align-items: center;
-                     padding: 8px 12px; background: #f8f9fa; border-radius: 6px; margin-bottom: 6px; }
-        .topk-item .sim { color: #1a73e8; font-weight: 600; font-size: 14px; }
-        .error-msg { color: #d93025; background: #fce8e6; border-radius: 8px; padding: 12px 16px; margin: 12px 0; }
-        .desc-text { line-height: 1.8; font-size: 14px; color: #444; }
-        .desc-text .label { font-weight: 600; color: #333; display: block; margin-top: 12px; margin-bottom: 4px; }
-        .empty-state { text-align: center; padding: 40px 20px; color: #aaa; font-size: 15px; }
-        .tag { display: inline-block; background: #e8f0fe; color: #1a73e8; padding: 2px 10px; border-radius: 12px; font-size: 12px; }
-        .lang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .lang-card { background: #f8f9fa; border-radius: 8px; padding: 12px; border-left: 3px solid #1a73e8; }
-        .lang-code { font-weight: 600; color: #1a73e8; font-size: 13px; margin-bottom: 4px; }
-        .lang-text { font-size: 13px; color: #444; line-height: 1.5; }
-        .seo-card { background: #f8f9fa; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
-        .seo-label { font-weight: 600; color: #555; font-size: 13px; display: block; margin-bottom: 4px; }
-        .seo-value { font-size: 14px; color: #333; line-height: 1.5; }
-        .kw-tag { display: inline-block; background: #e8f0fe; color: #1a73e8; padding: 4px 12px;
-                  border-radius: 14px; font-size: 12px; margin: 3px 4px 3px 0; }
-        .flag-icon { font-size: 16px; margin-right: 4px; }
-        footer { text-align: center; color: #aaa; font-size: 13px; margin-top: 32px; }
-        @media (max-width: 768px) {
-            .input-row { flex-direction: column; }
-            .btn { width: 100%; }
-            .lang-grid { grid-template-columns: 1fr; }
-            .tab { padding: 8px 12px; font-size: 13px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>外贸商品信息标准化与多语言 SEO 系统</title>
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; color: #333; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+  nav { display: flex; gap: 8px; margin-bottom: 16px; }
+  nav button { padding: 8px 20px; border: none; border-radius: 6px; background: #fff; color: #555; cursor: pointer; font-size: 14px; }
+  nav button.active { background: #1a73e8; color: #fff; }
+  h1 { text-align: center; color: #1a73e8; font-size: 22px; margin-bottom: 4px; }
+  .subtitle { text-align: center; color: #888; font-size: 13px; margin-bottom: 20px; }
+  .card { background: #fff; border-radius: 10px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
+  .card h3 { font-size: 15px; color: #333; margin-bottom: 12px; border-left: 3px solid #1a73e8; padding-left: 8px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  input, textarea, select { padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; outline: none; }
+  input:focus, textarea:focus { border-color: #1a73e8; }
+  input[type=text], select { min-width: 130px; }
+  textarea { width: 100%; min-height: 80px; resize: vertical; margin-top: 8px; }
+  button { padding: 8px 18px; border: none; border-radius: 6px; background: #1a73e8; color: #fff; cursor: pointer; font-size: 14px; }
+  button:hover { background: #1557b5; }
+  button:disabled { background: #a0c4ff; cursor: not-allowed; }
+  button.secondary { background: #f0f2f5; color: #555; }
+  button.danger { background: #d93025; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .field label { display: block; font-size: 12px; color: #888; margin-bottom: 4px; }
+  .field input, .field select { width: 100%; }
+  .param-row { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+  .param-row input { flex: 1; }
+  .lang-card { background: #f8f9fa; border-radius: 8px; padding: 12px; margin-bottom: 10px; }
+  .lang-card h4 { font-size: 13px; color: #1a73e8; margin-bottom: 6px; }
+  .lang-card textarea { min-height: 70px; }
+  .seo-card { background: #f8f9fa; border-radius: 8px; padding: 12px; margin-bottom: 10px; }
+  .seo-card h4 { font-size: 13px; color: #1a73e8; margin-bottom: 6px; }
+  .seo-card input { width: 100%; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; }
+  th, td { padding: 10px 12px; text-align: left; font-size: 13px; border-bottom: 1px solid #eee; }
+  th { background: #f8f9fa; color: #555; }
+  .tag { display: inline-block; background: #e8f0fe; color: #1a73e8; padding: 2px 10px; border-radius: 12px; font-size: 12px; margin: 2px; }
+  .topk { display: flex; gap: 10px; flex-wrap: wrap; }
+  .topk-item { background: #f8f9fa; border-radius: 6px; padding: 6px 10px; font-size: 12px; }
+  .error { color: #d93025; background: #fce8e6; border-radius: 6px; padding: 10px 14px; margin-bottom: 12px; }
+  .success { color: #188038; background: #e6f4ea; border-radius: 6px; padding: 10px 14px; margin-bottom: 12px; }
+  .pagination { display: flex; gap: 8px; align-items: center; margin-top: 12px; }
+  .muted { color: #888; font-size: 12px; }
+  .label { font-weight: 600; color: #333; display: block; margin: 8px 0 4px; font-size: 13px; }
+  .kv { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px 16px; font-size: 13px; }
+  .kv div b { color: #666; font-weight: 500; }
+  .banner { background: #fef7e0; border: 1px solid #f9c74f; color: #8a6d1a; border-radius: 6px; padding: 8px 14px; margin-bottom: 12px; font-size: 13px; }
+</style>
 </head>
 <body>
-<div class="container">
-    <h1>🌐 AI 外贸商品信息标准化与多语言 SEO 系统</h1>
-    <p class="subtitle">RAG + LLM 驱动 · 一键生成结构化数据 · 多语言翻译 · SEO 元数据</p>
+<div id="app">
+  <div class="container">
+    <h1>🌐 外贸商品信息标准化与多语言 SEO 系统</h1>
+    <p class="subtitle">AI 解析 · 英文描述 · 多语言 · SEO · 保存审核</p>
 
-    <!-- Input -->
-    <div class="card">
-        <div class="input-row">
-            <input type="text" id="partNumber" placeholder="输入外贸商品型号，如 STM32F103C8T6"
-                   onkeydown="if(event.key==='Enter') generate()">
-            <button class="btn btn-primary" id="generateBtn" onclick="generate()">🚀 一键生成</button>
+    <nav>
+      <button :class="{active: view==='workbench'}" @click="switchView('workbench')">工作台</button>
+      <button :class="{active: view==='list'}" @click="goList()">历史记录</button>
+    </nav>
+
+    <div v-if="error" class="error">{{ error }}</div>
+    <div v-if="success" class="success">{{ success }}</div>
+    <div v-if="editingId" class="banner">正在编辑记录 #{{ editingId }}，保存后更新该记录。 <a href="javascript:;" @click="cancelEdit()" style="color:#1a73e8">取消编辑</a></div>
+
+    <!-- ============ 工作台 ============ -->
+    <template v-if="view==='workbench'">
+      <div class="card">
+        <h3>① 输入与解析</h3>
+        <div class="row">
+          <input type="text" v-model="partNumber" placeholder="型号，如 STM32F103C8T6" @keyup.enter="parsePart">
+          <input type="text" v-model="brand" placeholder="品牌（可选）">
+          <button @click="parsePart" :disabled="loading">{{ loading ? '解析中...' : '解析' }}</button>
         </div>
-        <div class="samples">
-            <span>快速示例：</span>
-            <button class="btn btn-sample" onclick="fillSample('STM32F103C8T6')">STM32F103C8T6 (MCU)</button>
-            <button class="btn btn-sample" onclick="fillSample('TPS5430')">TPS5430 (电源IC)</button>
-            <button class="btn btn-sample" onclick="fillSample('LM358')">LM358 (运放)</button>
-            <button class="btn btn-sample" onclick="fillSample('RC0603FR-07100RL')">RC0603FR-07100RL (电阻)</button>
+        <textarea v-model="rawText" placeholder="粘贴大段描述（含型号/品牌/属性等），点「解析描述」提取结构化字段"></textarea>
+        <div class="row" style="margin-top:8px;">
+          <button class="secondary" @click="parseText" :disabled="loading">{{ loading ? '解析中...' : '解析描述' }}</button>
         </div>
-    </div>
-
-    <!-- Progress -->
-    <div class="card" id="progressCard" style="display:none;">
-        <div class="progress" id="progressSteps">
-            <div class="progress-step" id="step1"><span class="icon">○</span> RAG 相似商品检索 ...</div>
-            <div class="progress-step" id="step2"><span class="icon">○</span> AI 结构化 + 多语言翻译 ...</div>
-            <div class="progress-step" id="step3"><span class="icon">○</span> SEO 元数据生成 ...</div>
+        <div v-if="goodsDoc && goodsDoc.topK && goodsDoc.topK.length" style="margin-top:12px;">
+          <div class="muted" style="margin-bottom:6px;">🔎 RAG 召回参考（TOP-K）</div>
+          <div class="topk">
+            <span v-for="(h, i) in goodsDoc.topK" :key="h.partNumber + i" class="topk-item">{{ h.partNumber }} <span class="muted">{{ h.brand || '' }} · {{ h.score }}分</span></span>
+          </div>
         </div>
-    </div>
+      </div>
 
-    <!-- Error -->
-    <div class="card" id="errorCard" style="display:none;">
-        <div class="error-msg" id="errorMsg"></div>
-    </div>
-
-    <!-- Results -->
-    <div class="card" id="resultCard" style="display:none;">
-        <div class="tab-bar">
-            <div class="tab active" onclick="switchTab('json', this)">📊 标准化数据</div>
-            <div class="tab" onclick="switchTab('multi', this)">🌍 多语言翻译</div>
-            <div class="tab" onclick="switchTab('seo', this)">🔍 SEO 信息</div>
-            <div class="tab" onclick="switchTab('desc', this)">📝 技术描述</div>
+      <div class="card" v-if="goodsDoc">
+        <h3>② 基本资料（可编辑）</h3>
+        <div class="grid3">
+          <div class="field"><label>型号 *</label><input v-model="goodsDoc.partNumber" placeholder="型号"></div>
+          <div class="field"><label>品牌</label><input v-model="goodsDoc.brand" placeholder="品牌"></div>
+          <div class="field"><label>分类</label><input v-model="goodsDoc.category" placeholder="分类"></div>
+          <div class="field"><label>子分类</label><input v-model="goodsDoc.subcategory" placeholder="子分类"></div>
+          <div class="field"><label>系列</label><input v-model="goodsDoc.series" placeholder="系列"></div>
+          <div class="field"><label>封装</label><input v-model="goodsDoc.packageType" placeholder="封装"></div>
+          <div class="field"><label>安装类型</label><input v-model="goodsDoc.mountingType" placeholder="SMD/THT"></div>
+          <div class="field"><label>引脚数</label><input v-model="goodsDoc.pinCount" placeholder="引脚数"></div>
+          <div class="field"><label>尺寸</label><input v-model="goodsDoc.dimensions" placeholder="尺寸"></div>
+          <div class="field"><label>工作温度</label><input v-model="goodsDoc.operatingTemp" placeholder="如 -40~+85℃"></div>
+          <div class="field"><label>存储温度</label><input v-model="goodsDoc.storageTemp" placeholder="存储温度"></div>
+          <div class="field"><label>质量等级</label><input v-model="goodsDoc.grade" placeholder="质量等级"></div>
+          <div class="field"><label>RoHS</label><input v-model="goodsDoc.rohs" placeholder="RoHS/环保"></div>
+          <div class="field"><label>包装方式</label><input v-model="goodsDoc.packaging" placeholder="编带/托盘/管装"></div>
+          <div class="field"><label>MOQ</label><input v-model="goodsDoc.moq" placeholder="最小起订量"></div>
+          <div class="field"><label>单位</label><input v-model="goodsDoc.unit" placeholder="pcs/盘"></div>
+          <div class="field"><label>海关编码</label><input v-model="goodsDoc.hsCode" placeholder="海关编码"></div>
+          <div class="field"><label>交期</label><input v-model="goodsDoc.leadTime" placeholder="交期"></div>
+          <div class="field"><label>价格区间</label><input v-model="goodsDoc.priceRange" placeholder="价格区间"></div>
+          <div class="field"><label>供货状态</label><input v-model="goodsDoc.availability" placeholder="现货/订货"></div>
+          <div class="field"><label>数据手册URL</label><input v-model="goodsDoc.datasheetUrl" placeholder="业务员维护"></div>
+          <div class="field"><label>图片URL</label><input v-model="goodsDoc.imageUrl" placeholder="业务员维护"></div>
         </div>
-
-        <div class="tab-content active" id="tab-json">
-            <pre id="jsonOutput">等待数据...</pre>
+        <div style="margin-top:12px;">
+          <span class="label">参数（动态增删）</span>
+          <div v-for="(p, i) in goodsDoc.parameters" :key="i" class="param-row">
+            <input v-model="p.name" placeholder="参数名">
+            <input v-model="p.value" placeholder="数值">
+            <input v-model="p.unit" placeholder="单位">
+            <button class="secondary" @click="removeParam(i)">删除</button>
+          </div>
+          <button class="secondary" @click="addParam">+ 添加参数</button>
+          <span class="label">应用领域</span>
+          <div class="row">
+            <input type="text" v-model="newApp" placeholder="如：消费电子" style="flex:1" @keyup.enter="addApp">
+            <button class="secondary" @click="addApp">添加</button>
+          </div>
+          <div class="row" style="margin-top:6px;">
+            <span v-for="(a, i) in goodsDoc.applications" :key="i" class="tag">{{ a }} <span style="cursor:pointer" @click="goodsDoc.applications.splice(i,1)">×</span></span>
+          </div>
         </div>
-
-        <div class="tab-content" id="tab-multi">
-            <div id="multiOutput"><div class="empty-state">暂无翻译数据</div></div>
+        <div style="margin-top:14px;">
+          <button @click="generateDesc" :disabled="loading">{{ loading ? '生成中...' : '③ 生成英文描述' }}</button>
         </div>
-
-        <div class="tab-content" id="tab-seo">
-            <div id="seoOutput"><div class="empty-state">暂无 SEO 数据</div></div>
+        <div v-if="goodsDoc.descriptionEn" style="margin-top:12px;">
+          <span class="label">英文描述（可编辑）</span>
+          <textarea v-model="goodsDoc.descriptionEn"></textarea>
         </div>
+      </div>
 
-        <div class="tab-content" id="tab-desc">
-            <div id="descOutput"><div class="empty-state">暂无数据</div></div>
+      <div class="card" v-if="goodsDoc && goodsDoc.descriptionEn">
+        <h3>④ 多语言 + SEO 生成</h3>
+        <button @click="generateMulti" :disabled="loading">{{ loading ? '生成中...' : '生成多语言 + SEO' }}</button>
+        <div v-if="multiResult">
+          <div style="margin-top:14px;">
+            <span class="label">多语言描述（可编辑）</span>
+            <div v-for="(label, code) in langLabels" :key="code" class="lang-card" v-if="multiResult.multilingual && multiResult.multilingual[code]">
+              <h4>{{ label }}</h4>
+              <textarea v-model="multiResult.multilingual[code]"></textarea>
+            </div>
+          </div>
+          <div style="margin-top:14px;">
+            <span class="label">SEO（中/英/日/俄）</span>
+            <div v-for="(label, code) in seoLabels" :key="code" class="seo-card" v-if="multiResult.seo && multiResult.seo[code]">
+              <h4>{{ label }} <button class="secondary copy" @click="copySeo(code)">复制</button></h4>
+              <div class="field"><label>Title</label><input v-model="multiResult.seo[code].title"></div>
+              <div class="field" style="margin-top:6px;"><label>Keywords（逗号分隔）</label><input v-model="multiResult.seo[code].keywordsText"></div>
+              <div class="field" style="margin-top:6px;"><label>Description</label><textarea v-model="multiResult.seo[code].description"></textarea></div>
+            </div>
+          </div>
         </div>
-    </div>
+      </div>
 
-    <!-- TOP-K -->
-    <div class="card" id="topkCard" style="display:none;">
-        <h3 style="font-size:15px;margin-bottom:12px;">📌 召回参考 (TOP-3)</h3>
-        <div id="topkList"></div>
-        <div style="margin-top:12px;font-size:12px;color:#888;">
-            <span class="tag">RAG</span> 本地 n-gram 向量检索 + 余弦相似度
+      <div class="card" v-if="goodsDoc">
+        <button @click="save" :disabled="loading">{{ loading ? '保存中...' : editingId ? '保存修改' : '保存到历史' }}</button>
+      </div>
+    </template>
+
+    <!-- ============ 历史列表 ============ -->
+    <template v-if="view==='list'">
+      <div class="card">
+        <h3>历史记录</h3>
+        <table>
+          <thead><tr><th>ID</th><th>型号</th><th>品牌</th><th>分类</th><th>封装</th><th>创建时间</th><th>操作</th></tr></thead>
+          <tbody>
+            <tr v-for="r in records" :key="r.id">
+              <td>{{ r.id }}</td><td>{{ r.partNumber }}</td><td>{{ r.brand }}</td><td>{{ r.category }}</td><td>{{ r.packageType }}</td><td>{{ r.cTime }}</td>
+              <td>
+                <button class="secondary" @click="viewDetail(r.id)">查看</button>
+                <button class="secondary" @click="editRecord(r.id)">编辑</button>
+                <button class="danger" @click="delRecord(r.id)">删除</button>
+              </td>
+            </tr>
+            <tr v-if="!records.length"><td colspan="7" style="text-align:center;color:#aaa;">暂无记录</td></tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <button class="secondary" @click="changePage(page - 1)" :disabled="page <= 1">上一页</button>
+          <span>第 {{ page }} 页 / 共 {{ totalPages }} 页（共 {{ total }} 条）</span>
+          <button class="secondary" @click="changePage(page + 1)" :disabled="page >= totalPages">下一页</button>
         </div>
-    </div>
+      </div>
+    </template>
 
-    <!-- Fallback message -->
-    <div class="card" id="fallbackCard" style="display:none;">
-        <div style="color:#f9ab00;font-weight:500;">⚠️ <span id="fallbackMsg"></span></div>
-    </div>
-
-    <footer>AI 驱动的外贸商品信息标准化与 SEO 优化系统</footer>
+    <!-- ============ 只读详情 ============ -->
+    <template v-if="view==='detail' && detail">
+      <div class="card">
+        <h3>记录 #{{ detail.id }} 详情</h3>
+        <button class="secondary" @click="editRecord(detail.id)" style="margin-bottom:12px;">编辑</button>
+        <div class="kv">
+          <div v-if="detail.basic.partNumber"><b>型号：</b>{{ detail.basic.partNumber }}</div>
+          <div v-if="detail.basic.brand"><b>品牌：</b>{{ detail.basic.brand }}</div>
+          <div v-if="detail.basic.category"><b>分类：</b>{{ detail.basic.category }}</div>
+          <div v-if="detail.basic.subcategory"><b>子分类：</b>{{ detail.basic.subcategory }}</div>
+          <div v-if="detail.basic.series"><b>系列：</b>{{ detail.basic.series }}</div>
+          <div v-if="detail.basic.packageType"><b>封装：</b>{{ detail.basic.packageType }}</div>
+          <div v-if="detail.basic.mountingType"><b>安装类型：</b>{{ detail.basic.mountingType }}</div>
+          <div v-if="detail.basic.pinCount"><b>引脚数：</b>{{ detail.basic.pinCount }}</div>
+          <div v-if="detail.basic.dimensions"><b>尺寸：</b>{{ detail.basic.dimensions }}</div>
+          <div v-if="detail.basic.operatingTemp"><b>工作温度：</b>{{ detail.basic.operatingTemp }}</div>
+          <div v-if="detail.basic.storageTemp"><b>存储温度：</b>{{ detail.basic.storageTemp }}</div>
+          <div v-if="detail.basic.grade"><b>质量等级：</b>{{ detail.basic.grade }}</div>
+          <div v-if="detail.basic.rohs"><b>RoHS：</b>{{ detail.basic.rohs }}</div>
+          <div v-if="detail.basic.packaging"><b>包装方式：</b>{{ detail.basic.packaging }}</div>
+          <div v-if="detail.basic.moq"><b>MOQ：</b>{{ detail.basic.moq }}</div>
+          <div v-if="detail.basic.unit"><b>单位：</b>{{ detail.basic.unit }}</div>
+          <div v-if="detail.basic.hsCode"><b>海关编码：</b>{{ detail.basic.hsCode }}</div>
+          <div v-if="detail.basic.leadTime"><b>交期：</b>{{ detail.basic.leadTime }}</div>
+          <div v-if="detail.basic.priceRange"><b>价格区间：</b>{{ detail.basic.priceRange }}</div>
+          <div v-if="detail.basic.availability"><b>供货状态：</b>{{ detail.basic.availability }}</div>
+          <div v-if="detail.basic.datasheetUrl"><b>数据手册：</b>{{ detail.basic.datasheetUrl }}</div>
+          <div v-if="detail.basic.imageUrl"><b>图片：</b>{{ detail.basic.imageUrl }}</div>
+        </div>
+        <template v-if="detail.basic.parameters && detail.basic.parameters.length">
+          <span class="label">参数</span>
+          <table><thead><tr><th>参数名</th><th>数值</th><th>单位</th></tr></thead>
+          <tbody><tr v-for="(p, i) in detail.basic.parameters" :key="i"><td>{{ p.name }}</td><td>{{ p.value }}</td><td>{{ p.unit }}</td></tr></tbody></table>
+        </template>
+        <template v-if="detail.basic.applications && detail.basic.applications.length">
+          <span class="label">应用领域</span>
+          <div class="row"><span v-for="(a, i) in detail.basic.applications" :key="i" class="tag">{{ a }}</span></div>
+        </template>
+        <div v-if="detail.basic.descriptionEn">
+          <span class="label">英文描述</span>
+          <pre style="white-space:pre-wrap;background:#f8f9fa;border-radius:6px;padding:12px;font-size:13px;">{{ detail.basic.descriptionEn }}</pre>
+        </div>
+        <template v-if="detail.multilingual">
+          <span class="label">多语言描述</span>
+          <div v-for="(label, code) in langLabels" :key="code" class="lang-card" v-if="detail.multilingual[code]">
+            <h4>{{ label }}</h4><div style="font-size:13px;white-space:pre-wrap;">{{ detail.multilingual[code] }}</div>
+          </div>
+        </template>
+        <template v-if="detail.seo">
+          <span class="label">SEO（中/英/日/俄）</span>
+          <div v-for="(label, code) in seoLabels" :key="code" class="seo-card" v-if="detail.seo[code]">
+            <h4>{{ label }}</h4>
+            <div class="muted">Title</div><div style="font-size:13px;">{{ detail.seo[code].title }}</div>
+            <div class="muted">Keywords</div><div style="font-size:13px;">{{ (detail.seo[code].keywords || []).join(', ') }}</div>
+            <div class="muted">Description</div><div style="font-size:13px;">{{ detail.seo[code].description }}</div>
+          </div>
+        </template>
+      </div>
+    </template>
+  </div>
 </div>
 
 <script>
-    const API_BASE = window.location.origin + '/hq';
+const { createApp } = Vue;
+const API = '/doc/api/doc';
 
-    function fillSample(mpn) {
-        document.getElementById('partNumber').value = mpn;
-    }
+createApp({
+  data() {
+    return {
+      view: 'workbench',
+      loading: false, error: '', success: '',
+      partNumber: '', brand: '', rawText: '',
+      goodsDoc: null, multiResult: null, newApp: '',
+      editingId: null,
+      records: [], page: 1, size: 10, total: 0, totalPages: 0,
+      detail: null,
+      langLabels: { en: '🇬🇧 English', zh: '🇨🇳 中文', zhTw: '🇨🇳 繁体中文', ja: '🇯🇵 日本語', ru: '🇷🇺 Русский' },
+      seoLabels: { zh: '中文 SEO', en: 'English SEO', ja: '日本語 SEO', ru: 'Русский SEO' }
+    };
+  },
+  methods: {
+    clearMsg() { this.error = ''; this.success = ''; },
+    async api(path, method, body) {
+      const opt = { method: method || 'GET', headers: { 'Content-Type': 'application/json' } };
+      if (body !== undefined) opt.body = JSON.stringify(body);
+      const resp = await fetch(API + path, opt);
+      const result = await resp.json();
+      if (result.code !== 200) throw new Error(result.message || '请求失败');
+      return result.body;
+    },
+    wrap(fn) {
+      this.clearMsg();
+      return fn().catch(e => { this.error = e.message || '请求失败'; this.loading = false; });
+    },
+    switchView(v) { this.view = v; this.clearMsg(); },
+    goList() { this.page = 1; this.switchView('list'); this.loadList(); },
 
-    async function generate() {
-        const partNumber = document.getElementById('partNumber').value.trim();
-        if (!partNumber) {
-            showError('请输入商品型号');
-            return;
+    normalizeVo(vo) {
+      if (!vo.parameters) vo.parameters = [];
+      if (!vo.applications) vo.applications = [];
+      if (!vo.topK) vo.topK = [];
+      return vo;
+    },
+    async parsePart() {
+      if (!this.partNumber.trim()) { this.error = '请输入型号'; return; }
+      this.loading = true;
+      await this.wrap(async () => {
+        const vo = await this.api('/parsePart', 'POST', { partNumber: this.partNumber.trim(), brand: this.brand.trim() });
+        this.goodsDoc = this.normalizeVo(vo);
+        this.multiResult = null; this.editingId = null;
+        this.success = '解析完成，请核对基本资料';
+      });
+      this.loading = false;
+    },
+    async parseText() {
+      if (!this.rawText.trim()) { this.error = '请输入描述文本'; return; }
+      this.loading = true;
+      await this.wrap(async () => {
+        const vo = await this.api('/parseText', 'POST', { rawText: this.rawText.trim() });
+        this.goodsDoc = this.normalizeVo(vo);
+        this.multiResult = null; this.editingId = null;
+        this.success = '解析完成，已覆盖页面字段，请核对';
+      });
+      this.loading = false;
+    },
+    async generateDesc() {
+      this.loading = true;
+      await this.wrap(async () => {
+        const body = await this.api('/generateDesc', 'POST', { goodsDoc: this.goodsDoc });
+        this.goodsDoc.descriptionEn = body.description;
+        this.success = '英文描述已生成';
+      });
+      this.loading = false;
+    },
+    async generateMulti() {
+      this.loading = true;
+      await this.wrap(async () => {
+        const body = await this.api('/generateMulti', 'POST', { goodsDoc: this.goodsDoc, description: this.goodsDoc.descriptionEn });
+        if (body.seo) {
+          Object.values(body.seo).forEach(s => { s.keywordsText = (s.keywords || []).join(', '); });
         }
-
-        // Reset UI
-        hideAll();
-        document.getElementById('generateBtn').disabled = true;
-        document.getElementById('progressCard').style.display = 'block';
-        setStep('step1', 'active');
-
-        try {
-            // Step 1: RAG
-            await delay(400);
-            setStep('step1', 'done');
-            setStep('step2', 'active');
-
-            // Step 2+3: API call
-            const response = await fetch(API_BASE + '/api/generate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ partNumber })
-            });
-
-            setStep('step2', 'done');
-            setStep('step3', 'active');
-            await delay(200);
-
-            const result = await response.json();
-            setStep('step3', 'done');
-
-            if (!result.success) {
-                showError(result.message || '处理失败');
-                document.getElementById('generateBtn').disabled = false;
-                return;
-            }
-
-            if (result.message) {
-                document.getElementById('fallbackCard').style.display = 'block';
-                document.getElementById('fallbackMsg').textContent = result.message;
-            }
-
-            displayResults(result.data);
-
-        } catch (err) {
-            setStep('step1', 'active');
-            showError('请求失败: ' + err.message + '。请检查网络连接和后端服务。');
-        } finally {
-            document.getElementById('generateBtn').disabled = false;
-        }
-    }
-
-    function displayResults(data) {
-        // ===== JSON tab =====
-        const jsonDisplay = {
-            part_number: data.partNumber,
-            brand: data.brand,
-            category: data.category,
-            parameters: data.parameters || {},
-            standard_desc: data.standardDesc,
-            applications: data.applications || [],
-            multilingual: data.multilingual || {},
-            seo: data.seo || {},
-            reasoning_steps: data.reasoningSteps || []
-        };
-        document.getElementById('jsonOutput').textContent = JSON.stringify(jsonDisplay, null, 2);
-
-        // ===== Multilingual tab =====
-        let multiHtml = '';
-        if (data.multilingual && Object.keys(data.multilingual).length > 0) {
-            const langNames = {
-                'en': '🇬🇧 English', 'zh': '🇨🇳 中文', 'es': '🇪🇸 Español',
-                'ar': '🇸🇦 العربية', 'fr': '🇫🇷 Français', 'ru': '🇷🇺 Русский',
-                'pt': '🇧🇷 Português', 'de': '🇩🇪 Deutsch', 'ja': '🇯🇵 日本語',
-                'ko': '🇰🇷 한국어'
+        this.multiResult = body;
+        this.success = '多语言 + SEO 已生成，请核对';
+      });
+      this.loading = false;
+    },
+    addParam() { this.goodsDoc.parameters.push({ name: '', value: '', unit: '' }); },
+    removeParam(i) { this.goodsDoc.parameters.splice(i, 1); },
+    addApp() {
+      const v = (this.newApp || '').trim();
+      if (v) { this.goodsDoc.applications.push(v); this.newApp = ''; }
+    },
+    async save() {
+      this.loading = true;
+      await this.wrap(async () => {
+        const seo = {};
+        if (this.multiResult && this.multiResult.seo) {
+          Object.keys(this.multiResult.seo).forEach(code => {
+            const s = this.multiResult.seo[code];
+            seo[code] = {
+              title: s.title || '',
+              keywords: (s.keywordsText || '').split(/[,，]/).map(x => x.trim()).filter(Boolean),
+              description: s.description || ''
             };
-            const langOrder = ['en', 'zh', 'es', 'ar', 'fr', 'ru', 'pt', 'de', 'ja', 'ko'];
-            multiHtml = '<p style="color:#888;font-size:13px;margin-bottom:12px;">🌍 多语言商品描述，适用于全球外贸推广</p><div class="lang-grid">';
-            for (const code of langOrder) {
-                if (data.multilingual[code]) {
-                    const name = langNames[code] || code;
-                    multiHtml += '<div class="lang-card">'
-                        + '<div class="lang-code">' + name + '</div>'
-                        + '<div class="lang-text">' + escapeHtml(data.multilingual[code]) + '</div>'
-                        + '</div>';
-                }
-            }
-            multiHtml += '</div>';
-        } else {
-            multiHtml = '<div class="empty-state">暂无多语言翻译数据（AI 返回后显示）</div>';
+          });
         }
-        document.getElementById('multiOutput').innerHTML = multiHtml;
+        const payload = {
+          id: this.editingId,
+          goodsDoc: this.goodsDoc,
+          multilingual: this.multiResult ? this.multiResult.multilingual : null,
+          seo: Object.keys(seo).length ? seo : null,
+          sourceType: this.sourceType
+        };
+        const id = await this.api('/save', 'POST', payload);
+        this.success = this.editingId ? '已更新记录 #' + id : '已保存记录 #' + id;
+        this.editingId = null;
+        this.rawText = '';
+      });
+      this.loading = false;
+    },
 
-        // ===== SEO tab =====
-        let seoHtml = '';
-        if (data.seo) {
-            if (data.seo.metaTitle) {
-                seoHtml += '<div class="seo-card">'
-                    + '<span class="seo-label">🔖 Meta Title（SEO标题）</span>'
-                    + '<div class="seo-value">' + escapeHtml(data.seo.metaTitle) + '</div>'
-                    + '</div>';
-            }
-            if (data.seo.metaDescription) {
-                seoHtml += '<div class="seo-card">'
-                    + '<span class="seo-label">📄 Meta Description（SEO描述）</span>'
-                    + '<div class="seo-value">' + escapeHtml(data.seo.metaDescription) + '</div>'
-                    + '</div>';
-            }
-            if (data.seo.keywords && data.seo.keywords.length > 0) {
-                seoHtml += '<div class="seo-card">'
-                    + '<span class="seo-label">🏷️ Keywords（关键词）</span>'
-                    + '<div class="seo-value">';
-                data.seo.keywords.forEach(kw => {
-                    seoHtml += '<span class="kw-tag">#' + escapeHtml(kw) + '</span>';
-                });
-                seoHtml += '</div></div>';
-            }
-        }
-        if (!seoHtml) {
-            seoHtml = '<div class="empty-state">暂无 SEO 数据</div>';
-        }
-        document.getElementById('seoOutput').innerHTML = seoHtml;
-
-        // ===== Description tab =====
-        let descHtml = '';
-        if (data.standardDesc) {
-            descHtml += '<div class="label">📋 英文商品描述</div><p class="desc-text">' + escapeHtml(data.standardDesc) + '</p>';
-        }
-        if (data.applications && data.applications.length > 0) {
-            descHtml += '<div class="label">🎯 应用场景</div><div class="desc-text">';
-            data.applications.forEach(app => { descHtml += '<span class="tag" style="margin:2px 4px">' + escapeHtml(app) + '</span>'; });
-            descHtml += '</div>';
-        }
-        if (data.reasoningSteps && data.reasoningSteps.length > 0) {
-            descHtml += '<div class="label">🧠 分析推理步骤</div><ol class="desc-text">';
-            data.reasoningSteps.forEach(step => { descHtml += '<li>' + escapeHtml(step) + '</li>'; });
-            descHtml += '</ol>';
-        }
-        document.getElementById('descOutput').innerHTML = descHtml || '<div class="empty-state">暂无描述数据</div>';
-
-        // ===== TOP-K =====
-        if (data.topK && data.topK.length > 0) {
-            let topkHtml = '';
-            data.topK.forEach((item, i) => {
-                topkHtml += '<div class="topk-item">'
-                    + '<span>' + (i+1) + '. <strong>' + escapeHtml(item.partNumber) + '</strong> <span style="color:#888;font-size:13px;">' + escapeHtml(item.brand || '') + '</span></span>'
-                    + '<span class="sim">' + (item.similarity * 100).toFixed(1) + '%</span>'
-                    + '</div>';
-            });
-            document.getElementById('topkList').innerHTML = topkHtml;
-            document.getElementById('topkCard').style.display = 'block';
-        }
-
-        document.getElementById('resultCard').style.display = 'block';
+    async loadList() {
+      await this.wrap(async () => {
+        const body = await this.api('/list?page=' + this.page + '&size=' + this.size);
+        this.records = body.list || [];
+        this.total = body.total || 0;
+        this.totalPages = Math.ceil(this.total / this.size) || 1;
+      });
+    },
+    changePage(p) { if (p < 1) return; this.page = p; this.loadList(); },
+    async viewDetail(id) {
+      await this.wrap(async () => {
+        this.detail = await this.api('/detail?id=' + id);
+        this.view = 'detail';
+      });
+    },
+    async editRecord(id) {
+      await this.wrap(async () => {
+        const d = await this.api('/detail?id=' + id);
+        this.goodsDoc = this.normalizeVo(d.basic);
+        const seo = d.seo || {};
+        Object.values(seo).forEach(s => { s.keywordsText = (s.keywords || []).join(', '); });
+        this.multiResult = { multilingual: d.multilingual || {}, seo };
+        this.sourceType = d.sourceType;
+        this.editingId = d.id;
+        this.view = 'workbench';
+        this.success = '已加载记录 #' + id + '，可修改后保存';
+      });
+    },
+    cancelEdit() { this.editingId = null; this.multiResult = null; this.goodsDoc = null; this.rawText = ''; },
+    async delRecord(id) {
+      if (!confirm('确认删除记录 #' + id + '？')) return;
+      await this.wrap(async () => {
+        await this.api('/delete?id=' + id, 'DELETE');
+        this.success = '已删除记录 #' + id;
+        this.loadList();
+      });
+    },
+    async copySeo(code) {
+      const s = this.multiResult.seo[code];
+      const text = 'Title: ' + s.title + '\nKeywords: ' + (s.keywordsText || '') + '\nDescription: ' + s.description;
+      try {
+        await navigator.clipboard.writeText(text);
+        this.success = '已复制 ' + code + ' SEO';
+      } catch (e) {
+        this.error = '复制失败，请手动复制';
+      }
     }
-
-    function switchTab(tabName, el) {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-        el.classList.add('active');
-        document.getElementById('tab-' + tabName).classList.add('active');
-    }
-
-    function setStep(id, status) {
-        const el = document.getElementById(id);
-        el.classList.remove('active', 'done');
-        if (status === 'active') {
-            el.classList.add('active');
-            el.querySelector('.icon').innerHTML = '<span class="spinner"></span>';
-        } else if (status === 'done') {
-            el.classList.add('done');
-            el.querySelector('.icon').textContent = '✓';
-        }
-    }
-
-    function showError(msg) {
-        document.getElementById('errorCard').style.display = 'block';
-        document.getElementById('errorMsg').textContent = '⚠️ ' + msg;
-    }
-
-    function hideAll() {
-        document.getElementById('errorCard').style.display = 'none';
-        document.getElementById('resultCard').style.display = 'none';
-        document.getElementById('topkCard').style.display = 'none';
-        document.getElementById('fallbackCard').style.display = 'none';
-        document.getElementById('progressCard').style.display = 'none';
-    }
-
-    function delay(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
-
-    function escapeHtml(str) {
-        if (!str) return '';
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
-    }
+  }
+}).mount('#app');
 </script>
 </body>
 </html>

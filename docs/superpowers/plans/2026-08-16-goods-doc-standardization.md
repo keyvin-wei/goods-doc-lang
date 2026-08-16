@@ -1244,10 +1244,12 @@ import org.springframework.util.CollectionUtils;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
  * 简单实现：从 hq_goods_doc_record 按 型号/品牌/分类/封装 子串匹配计分，取 TOP-K。
+ * 注：当前为全表扫描 + 内存计分，适用于中小数据量；ES 部署后替换为向量检索实现（接口不变）。
  */
 @Service
 public class RagServiceImpl implements RagService {
@@ -1260,14 +1262,17 @@ public class RagServiceImpl implements RagService {
         if (StringUtils.isBlank(query) || k <= 0) {
             return Collections.emptyList();
         }
+        // 仅投影计分所需列，避免加载 TEXT 大字段
         List<GoodsDocRecord> records = goodsDocRecordDao.selectList(
-                new QueryWrapper<GoodsDocRecord>().eq("delete_status", 0));
+                new QueryWrapper<GoodsDocRecord>()
+                        .select("part_number", "brand", "category", "package")
+                        .eq("delete_status", 0));
         if (CollectionUtils.isEmpty(records)) {
             return Collections.emptyList();
         }
         return records.stream()
                 .map(r -> new RagHit(r.getPartNumber(), r.getBrand(), score(r, query)))
-                .filter(h -> h.getScore() != null && h.getScore() > 0)
+                .filter(h -> h.getScore() > 0)
                 .sorted(Comparator.comparingInt(RagHit::getScore).reversed())
                 .limit(k)
                 .collect(Collectors.toList());
@@ -1280,7 +1285,7 @@ public class RagServiceImpl implements RagService {
         if (r == null || StringUtils.isBlank(query)) {
             return 0;
         }
-        String q = query.toLowerCase();
+        String q = query.toLowerCase(Locale.ROOT);
         int s = 0;
         if (hit(r.getPartNumber(), q)) {
             s += 4;
@@ -1301,7 +1306,11 @@ public class RagServiceImpl implements RagService {
         if (StringUtils.isBlank(field)) {
             return false;
         }
-        String f = field.toLowerCase();
+        String f = field.toLowerCase(Locale.ROOT);
+        if (f.length() < 3) {
+            // 短字段（如品牌 "ST"/"TI"）：仅当查询完整包含该字段作为独立词或字段包含查询时命中，避免任意 2 字符子串误加分
+            return f.contains(q) || (" " + q + " ").contains(" " + f + " ");
+        }
         return q.contains(f) || f.contains(q);
     }
 }

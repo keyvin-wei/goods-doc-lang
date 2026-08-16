@@ -73,4 +73,20 @@ public class RagServiceImplTest {
     public void testSearchTopKBlankQuery() {
         assertTrue(ragService.searchTopK("", 3).isEmpty());
     }
+
+    @Test
+    public void testScoreShortBrandNoFalsePositive() {
+        // 品牌 "ST" 不应因型号 "STM32..." 前缀含 "st" 而误加分（只加型号4分）
+        assertEquals(4, RagServiceImpl.score(record(), "STM32F103C8T6"));
+    }
+
+    @Test
+    public void testSearchTopKNonPositiveK() {
+        assertTrue(ragService.searchTopK("STM32", 0).isEmpty());
+    }
+
+    @Test
+    public void testSearchTopKNullQuery() {
+        assertTrue(ragService.searchTopK(null, 3).isEmpty());
+    }
 }

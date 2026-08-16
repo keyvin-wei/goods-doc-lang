@@ -131,7 +131,7 @@ Demo 数据量小（≤50条），全表遍历计算即可。
 ## 九、项目结构
 
 ```
-src/main/java/com/keyvin/hq/
+src/main/java/com/hq/goods/lang/
 ├── controller/GoodsDocController.java
 ├── service/{GoodsDocService, AiService, EmbeddingService, RAGService}.java
 ├── repository/ComponentRepository.java

@@ -30,7 +30,7 @@ NEW/MODIFIED FILES:
 pom.xml                                          [MODIFY] Add MySQL + JPA deps
 src/main/resources/application.yml               [MODIFY] Add datasource + deepseek config
 
-src/main/java/com/keyvin/hq/
+src/main/java/com/hq/goods/lang/
 ├── entity/
 │   ├── Component.java                           [CREATE] JPA entity for component_library table
 │   └── CategoryTemplate.java                    [CREATE] JPA entity for category_template table
@@ -167,11 +167,11 @@ git commit -m "feat: add MySQL + JPA dependencies and schema"
 ### Task 2: Entity Layer + DTOs
 
 **Files:**
-- Create: `src/main/java/com/keyvin/hq/entity/Component.java`
-- Create: `src/main/java/com/keyvin/hq/entity/CategoryTemplate.java`
-- Create: `src/main/java/com/keyvin/hq/repository/ComponentRepository.java`
-- Create: `src/main/java/com/keyvin/hq/dto/GenerateRequest.java`
-- Create: `src/main/java/com/keyvin/hq/dto/GenerateResponse.java`
+- Create: `src/main/java/com/hq/goods/lang/entity/Component.java`
+- Create: `src/main/java/com/hq/goods/lang/entity/CategoryTemplate.java`
+- Create: `src/main/java/com/hq/goods/lang/repository/ComponentRepository.java`
+- Create: `src/main/java/com/hq/goods/lang/dto/GenerateRequest.java`
+- Create: `src/main/java/com/hq/goods/lang/dto/GenerateResponse.java`
 
 **Interfaces:**
 - Produces: `Component` JPA entity, `CategoryTemplate` JPA entity, `ComponentRepository` (Spring Data JPA), `GenerateRequest`, `GenerateResponse`
@@ -354,7 +354,7 @@ Expected: BUILD SUCCESS (no errors)
 - [ ] **Step 7: Commit**
 
 ```bash
-git add src/main/java/com/keyvin/hq/entity/ src/main/java/com/keyvin/hq/repository/ src/main/java/com/keyvin/hq/dto/
+git add src/main/java/com/hq/goods/lang/entity/ src/main/java/com/hq/goods/lang/repository/ src/main/java/com/hq/goods/lang/dto/
 git commit -m "feat: add entity layer, repository, and DTOs"
 ```
 
@@ -363,8 +363,8 @@ git commit -m "feat: add entity layer, repository, and DTOs"
 ### Task 3: VectorUtils & EmbeddingService
 
 **Files:**
-- Create: `src/main/java/com/keyvin/hq/util/VectorUtils.java`
-- Create: `src/main/java/com/keyvin/hq/service/EmbeddingService.java`
+- Create: `src/main/java/com/hq/goods/lang/util/VectorUtils.java`
+- Create: `src/main/java/com/hq/goods/lang/service/EmbeddingService.java`
 
 **Interfaces:**
 - Produces: `VectorUtils.cosineSimilarity(float[], float[])`, `VectorUtils.toBytes(float[])`, `VectorUtils.toFloats(byte[])`, `EmbeddingService.generateEmbedding(String)`, `EmbeddingService.generateEmbeddings(List<String>)`
@@ -509,7 +509,7 @@ Expected: BUILD SUCCESS
 - [ ] **Step 4: Commit**
 
 ```bash
-git add src/main/java/com/keyvin/hq/util/VectorUtils.java src/main/java/com/keyvin/hq/service/EmbeddingService.java
+git add src/main/java/com/hq/goods/lang/util/VectorUtils.java src/main/java/com/hq/goods/lang/service/EmbeddingService.java
 git commit -m "feat: add VectorUtils and EmbeddingService"
 ```
 
@@ -518,7 +518,7 @@ git commit -m "feat: add VectorUtils and EmbeddingService"
 ### Task 4: AiService (Chat + Prompt Builder)
 
 **Files:**
-- Create: `src/main/java/com/keyvin/hq/service/AiService.java`
+- Create: `src/main/java/com/hq/goods/lang/service/AiService.java`
 
 **Interfaces:**
 - Produces: `AiService.generate(String partNumber, String retrievedContext)` — returns JSON string from Deepseek chat
@@ -639,7 +639,7 @@ Expected: BUILD SUCCESS
 - [ ] **Step 3: Commit**
 
 ```bash
-git add src/main/java/com/keyvin/hq/service/AiService.java
+git add src/main/java/com/hq/goods/lang/service/AiService.java
 git commit -m "feat: add AiService with chat completion and prompt builder"
 ```
 
@@ -648,7 +648,7 @@ git commit -m "feat: add AiService with chat completion and prompt builder"
 ### Task 5: RAGService
 
 **Files:**
-- Create: `src/main/java/com/keyvin/hq/service/RAGService.java`
+- Create: `src/main/java/com/hq/goods/lang/service/RAGService.java`
 
 **Interfaces:**
 - Consumes: `ComponentRepository.findAll()`, `EmbeddingService.generateEmbedding(String)`, `VectorUtils.cosineSimilarity()`, `VectorUtils.toFloats()`
@@ -761,7 +761,7 @@ Expected: BUILD SUCCESS
 - [ ] **Step 3: Commit**
 
 ```bash
-git add src/main/java/com/keyvin/hq/service/RAGService.java
+git add src/main/java/com/hq/goods/lang/service/RAGService.java
 git commit -m "feat: add RAGService with embedding-based TOP-K retrieval"
 ```
 
@@ -770,7 +770,7 @@ git commit -m "feat: add RAGService with embedding-based TOP-K retrieval"
 ### Task 6: GoodsDocService (Orchestration + Fallback)
 
 **Files:**
-- Create: `src/main/java/com/keyvin/hq/service/GoodsDocService.java`
+- Create: `src/main/java/com/hq/goods/lang/service/GoodsDocService.java`
 
 **Interfaces:**
 - Consumes: `AiService.generate()`, `RAGService.search()`, `RAGService.buildContext()`
@@ -960,7 +960,7 @@ Expected: BUILD SUCCESS
 - [ ] **Step 3: Commit**
 
 ```bash
-git add src/main/java/com/keyvin/hq/service/GoodsDocService.java
+git add src/main/java/com/hq/goods/lang/service/GoodsDocService.java
 git commit -m "feat: add GoodsDocService with orchestration and fallback logic"
 ```
 
@@ -969,7 +969,7 @@ git commit -m "feat: add GoodsDocService with orchestration and fallback logic"
 ### Task 7: GoodsDocController
 
 **Files:**
-- Create: `src/main/java/com/keyvin/hq/controller/GoodsDocController.java`
+- Create: `src/main/java/com/hq/goods/lang/controller/GoodsDocController.java`
 
 **Interfaces:**
 - Consumes: `GoodsDocService.process(String)`
@@ -1045,7 +1045,7 @@ Expected: `OK`
 - [ ] **Step 5: Commit**
 
 ```bash
-git add src/main/java/com/keyvin/hq/controller/GoodsDocController.java
+git add src/main/java/com/hq/goods/lang/controller/GoodsDocController.java
 git commit -m "feat: add GoodsDocController with /api/generate endpoint"
 ```
 
@@ -1054,7 +1054,7 @@ git commit -m "feat: add GoodsDocController with /api/generate endpoint"
 ### Task 8: DataInitializer (Pre-populate Components)
 
 **Files:**
-- Create: `src/main/java/com/keyvin/hq/config/DataInitializer.java`
+- Create: `src/main/java/com/hq/goods/lang/config/DataInitializer.java`
 
 **Interfaces:**
 - Consumes: `ComponentRepository`, `EmbeddingService`, `CategoryTemplate` entity
@@ -1308,7 +1308,7 @@ Expected: BUILD SUCCESS
 - [ ] **Step 5: Commit**
 
 ```bash
-git add src/main/java/com/keyvin/hq/config/DataInitializer.java
+git add src/main/java/com/hq/goods/lang/config/DataInitializer.java
 git commit -m "feat: add DataInitializer with 30+ pre-populated demo components"
 ```
 

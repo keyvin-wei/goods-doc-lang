@@ -758,7 +758,10 @@ import org.junit.Test;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class GoodsDocParseUtilTest {
 
@@ -811,6 +814,51 @@ public class GoodsDocParseUtilTest {
         assertEquals(2, seo.get("en").getKeywords().size());
         assertEquals("描述", seo.get("zh").getDescription());
     }
+
+    @Test
+    public void testToGoodsDocVoMalformed() {
+        GoodsDocVo vo = GoodsDocParseUtil.toGoodsDocVo("不是JSON{{{");
+        assertNotNull(vo);
+        assertNull(vo.getPartNumber());
+    }
+
+    @Test
+    public void testToGoodsDocVoBlank() {
+        GoodsDocVo vo = GoodsDocParseUtil.toGoodsDocVo("");
+        assertNotNull(vo);
+        assertNull(vo.getPartNumber());
+    }
+
+    @Test
+    public void testToGoodsDocVoPinCountSafe() {
+        assertEquals(Integer.valueOf(64), GoodsDocParseUtil.toGoodsDocVo("{\"pinCount\":64}").getPinCount());
+        assertEquals(Integer.valueOf(64), GoodsDocParseUtil.toGoodsDocVo("{\"pinCount\":\"64\"}").getPinCount());
+        assertNull(GoodsDocParseUtil.toGoodsDocVo("{\"pinCount\":\"64 pins\"}").getPinCount());
+    }
+
+    @Test
+    public void testToGoodsDocVoTypeDeviation() {
+        assertNull(GoodsDocParseUtil.toGoodsDocVo("{\"parameters\":{\"name\":\"Flash\",\"value\":\"64KB\"}}").getParameters());
+        assertNull(GoodsDocParseUtil.toGoodsDocVo("{\"parameters\":[\"Flash\",\"64KB\"]}").getParameters());
+    }
+
+    @Test
+    public void testValidateJson() {
+        GoodsDocParseUtil.validateJson("```json\n{\"partNumber\":\"A\"}\n```");
+        GoodsDocParseUtil.validateJson("以下是结果：{\"partNumber\":\"A\"} 完毕");
+    }
+
+    @Test(expected = CustomException.class)
+    public void testValidateJsonInvalid() {
+        GoodsDocParseUtil.validateJson("完全没有JSON");
+    }
+
+    @Test
+    public void testIsValidJson() {
+        assertTrue(GoodsDocParseUtil.isValidJson("{\"a\":1}"));
+        assertFalse(GoodsDocParseUtil.isValidJson("not json"));
+        assertFalse(GoodsDocParseUtil.isValidJson(""));
+    }
 }
 ```
 
@@ -840,7 +888,7 @@ import com.hq.goods.lang.bean.vo.SeoVo;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -872,17 +920,46 @@ public final class GoodsDocParseUtil {
     }
 
     /**
-     * LLM 解析结果 JSON → GoodsDocVo（容错：字段缺失不报错）
+     * 校验 LLM 原始输出提取后是合法 JSON，非法则抛 CustomException（供服务层重试判定）
+     */
+    public static void validateJson(String raw) {
+        String json = extractJson(raw);
+        if (!isValidJson(json)) {
+            throw new CustomException(ResponseEnum.INNER_SERVER_ERROR.getCode(), "AI 输出未包含有效 JSON");
+        }
+    }
+
+    /**
+     * 判断给定字符串是否为合法 JSON
+     */
+    public static boolean isValidJson(String json) {
+        if (StringUtils.isBlank(json)) {
+            return false;
+        }
+        try {
+            return JSON.parse(json) != null;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * LLM 解析结果 JSON → GoodsDocVo（容错：字段缺失/类型偏离不报错，解析失败返回空 VO）
      */
     public static GoodsDocVo toGoodsDocVo(String json) {
-        if (StringUtils.isBlank(json)) {
-            return new GoodsDocVo();
-        }
-        JSONObject obj = JSON.parseObject(json);
-        if (obj == null) {
-            return new GoodsDocVo();
-        }
         GoodsDocVo vo = new GoodsDocVo();
+        if (StringUtils.isBlank(json)) {
+            return vo;
+        }
+        JSONObject obj;
+        try {
+            obj = JSON.parseObject(json);
+        } catch (Exception e) {
+            return vo;
+        }
+        if (obj == null) {
+            return vo;
+        }
         vo.setPartNumber(obj.getString("partNumber"));
         vo.setBrand(obj.getString("brand"));
         vo.setCategory(obj.getString("category"));
@@ -890,7 +967,7 @@ public final class GoodsDocParseUtil {
         vo.setSeries(obj.getString("series"));
         vo.setPackageType(obj.getString("packageType"));
         vo.setMountingType(obj.getString("mountingType"));
-        vo.setPinCount(obj.getInteger("pinCount"));
+        vo.setPinCount(toIntSafe(obj.get("pinCount")));
         vo.setDimensions(obj.getString("dimensions"));
         vo.setOperatingTemp(obj.getString("operatingTemp"));
         vo.setStorageTemp(obj.getString("storageTemp"));
@@ -906,30 +983,35 @@ public final class GoodsDocParseUtil {
         vo.setDatasheetUrl(obj.getString("datasheetUrl"));
         vo.setImageUrl(obj.getString("imageUrl"));
 
-        JSONArray params = obj.getJSONArray("parameters");
-        if (params != null) {
+        Object paramsRaw = obj.get("parameters");
+        if (paramsRaw instanceof JSONArray) {
+            JSONArray params = (JSONArray) paramsRaw;
             List<ParamItem> list = new ArrayList<>();
             for (int i = 0; i < params.size(); i++) {
-                JSONObject p = params.getJSONObject(i);
-                if (p == null) {
+                Object po = params.get(i);
+                if (!(po instanceof JSONObject)) {
                     continue;
                 }
+                JSONObject p = (JSONObject) po;
                 ParamItem item = new ParamItem();
                 item.setName(p.getString("name"));
                 item.setValue(p.getString("value"));
                 item.setUnit(p.getString("unit"));
                 list.add(item);
             }
-            vo.setParameters(list);
+            if (!list.isEmpty()) {
+                vo.setParameters(list);
+            }
         }
 
-        JSONArray apps = obj.getJSONArray("applications");
-        if (apps != null) {
+        Object appsRaw = obj.get("applications");
+        if (appsRaw instanceof JSONArray) {
+            JSONArray apps = (JSONArray) appsRaw;
             List<String> appList = new ArrayList<>();
             for (int i = 0; i < apps.size(); i++) {
-                String a = apps.getString(i);
-                if (StringUtils.isNotBlank(a)) {
-                    appList.add(a);
+                Object a = apps.get(i);
+                if (a instanceof String && StringUtils.isNotBlank((String) a)) {
+                    appList.add((String) a);
                 }
             }
             vo.setApplications(appList);
@@ -938,32 +1020,39 @@ public final class GoodsDocParseUtil {
     }
 
     /**
-     * SEO JSON → Map&lt;语言码, SeoVo&gt;（zh/en/ja/ru）
+     * SEO JSON → Map&lt;语言码, SeoVo&gt;（zh/en/ja/ru，容错：解析失败返回空 Map）
      */
     public static Map<String, SeoVo> parseSeo(String json) {
-        Map<String, SeoVo> result = new HashMap<>();
+        Map<String, SeoVo> result = new LinkedHashMap<>();
         if (StringUtils.isBlank(json)) {
             return result;
         }
-        JSONObject obj = JSON.parseObject(json);
+        JSONObject obj;
+        try {
+            obj = JSON.parseObject(json);
+        } catch (Exception e) {
+            return result;
+        }
         if (obj == null) {
             return result;
         }
         for (String key : obj.keySet()) {
-            JSONObject s = obj.getJSONObject(key);
-            if (s == null) {
+            Object so = obj.get(key);
+            if (!(so instanceof JSONObject)) {
                 continue;
             }
+            JSONObject s = (JSONObject) so;
             SeoVo seo = new SeoVo();
             seo.setTitle(s.getString("title"));
             seo.setDescription(s.getString("description"));
-            JSONArray kw = s.getJSONArray("keywords");
-            if (kw != null) {
+            Object kwRaw = s.get("keywords");
+            if (kwRaw instanceof JSONArray) {
+                JSONArray kw = (JSONArray) kwRaw;
                 List<String> keywords = new ArrayList<>();
                 for (int i = 0; i < kw.size(); i++) {
-                    String k = kw.getString(i);
-                    if (StringUtils.isNotBlank(k)) {
-                        keywords.add(k);
+                    Object k = kw.get(i);
+                    if (k instanceof String && StringUtils.isNotBlank((String) k)) {
+                        keywords.add((String) k);
                     }
                 }
                 seo.setKeywords(keywords);
@@ -971,6 +1060,27 @@ public final class GoodsDocParseUtil {
             result.put(key, seo);
         }
         return result;
+    }
+
+    /**
+     * 安全转 int：null/非数字返回 null，数字字符串/数值直接解析
+     */
+    private static Integer toIntSafe(Object o) {
+        if (o == null) {
+            return null;
+        }
+        if (o instanceof Number) {
+            return ((Number) o).intValue();
+        }
+        String s = String.valueOf(o).trim();
+        if (StringUtils.isBlank(s)) {
+            return null;
+        }
+        try {
+            return Integer.parseInt(s);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 }
 ```
@@ -1792,11 +1902,11 @@ public class GoodsDocServiceImpl implements GoodsDocService {
     private String callLlmWithRetry(String sys, String user) {
         String res = callLlm(sys, user);
         try {
-            GoodsDocParseUtil.toGoodsDocVo(GoodsDocParseUtil.extractJson(res));
+            GoodsDocParseUtil.validateJson(res);
         } catch (Exception e) {
             log.warn("[GoodsDoc] AI 输出解析失败，重试一次");
             res = callLlm(sys, user);
-            GoodsDocParseUtil.toGoodsDocVo(GoodsDocParseUtil.extractJson(res));
+            GoodsDocParseUtil.validateJson(res);
         }
         return res;
     }

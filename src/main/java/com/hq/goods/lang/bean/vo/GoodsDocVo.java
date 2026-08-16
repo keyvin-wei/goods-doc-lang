@@ -33,7 +33,7 @@ public class GoodsDocVo {
     private String datasheetUrl;
     private String imageUrl;
     private List<String> applications;
-    private String description;
+    private String descriptionEn;
     private String rawInput;
     private List<RagHit> topK;
 }

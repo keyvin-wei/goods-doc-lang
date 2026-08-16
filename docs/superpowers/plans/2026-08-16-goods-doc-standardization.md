@@ -432,7 +432,7 @@ public class GoodsDocVo {
     private String datasheetUrl;
     private String imageUrl;
     private List<String> applications;
-    private String description;
+    private String descriptionEn;
     private String rawInput;
     private List<RagHit> topK;
 }
@@ -1974,7 +1974,7 @@ public class GoodsDocServiceImpl implements GoodsDocService {
         r.setDatasheetUrl(vo.getDatasheetUrl());
         r.setImageUrl(vo.getImageUrl());
         r.setApplications(vo.getApplications() == null ? null : JSON.toJSONString(vo.getApplications()));
-        r.setDescriptionEn(vo.getDescription());
+        r.setDescriptionEn(vo.getDescriptionEn());
         r.setMultilingual(req.getMultilingual() == null ? null : JSON.toJSONString(req.getMultilingual()));
         r.setSeo(req.getSeo() == null ? null : JSON.toJSONString(req.getSeo()));
         r.setRawInput(vo.getRawInput());
@@ -2019,7 +2019,7 @@ public class GoodsDocServiceImpl implements GoodsDocService {
         vo.setDatasheetUrl(r.getDatasheetUrl());
         vo.setImageUrl(r.getImageUrl());
         vo.setApplications(parseJsonArray(r.getApplications(), String.class));
-        vo.setDescription(r.getDescriptionEn());
+        vo.setDescriptionEn(r.getDescriptionEn());
         vo.setRawInput(r.getRawInput());
         return vo;
     }
@@ -2341,13 +2341,13 @@ printf '在此目录放置默认图片/PDF（如 product-default.png），供业
         <div style="margin-top:14px;">
           <button @click="generateDesc" :disabled="loading">{{ loading ? '生成中...' : '③ 生成英文描述' }}</button>
         </div>
-        <div v-if="goodsDoc.description" style="margin-top:12px;">
+        <div v-if="goodsDoc.descriptionEn" style="margin-top:12px;">
           <span class="label">英文描述（可编辑）</span>
-          <textarea v-model="goodsDoc.description"></textarea>
+          <textarea v-model="goodsDoc.descriptionEn"></textarea>
         </div>
       </div>
 
-      <div class="card" v-if="goodsDoc && goodsDoc.description">
+      <div class="card" v-if="goodsDoc && goodsDoc.descriptionEn">
         <h3>④ 多语言 + SEO 生成</h3>
         <button @click="generateMulti" :disabled="loading">{{ loading ? '生成中...' : '生成多语言 + SEO' }}</button>
         <div v-if="multiResult">
@@ -2439,9 +2439,9 @@ printf '在此目录放置默认图片/PDF（如 product-default.png），供业
           <span class="label">应用领域</span>
           <div class="row"><span v-for="(a, i) in detail.basic.applications" :key="i" class="tag">{{ a }}</span></div>
         </template>
-        <div v-if="detail.basic.description">
+        <div v-if="detail.basic.descriptionEn">
           <span class="label">英文描述</span>
-          <pre style="white-space:pre-wrap;background:#f8f9fa;border-radius:6px;padding:12px;font-size:13px;">{{ detail.basic.description }}</pre>
+          <pre style="white-space:pre-wrap;background:#f8f9fa;border-radius:6px;padding:12px;font-size:13px;">{{ detail.basic.descriptionEn }}</pre>
         </div>
         <template v-if="detail.multilingual">
           <span class="label">多语言描述</span>
@@ -2530,7 +2530,7 @@ createApp({
       this.loading = true;
       await this.wrap(async () => {
         const body = await this.api('/generateDesc', 'POST', { goodsDoc: this.goodsDoc });
-        this.goodsDoc.description = body.description;
+        this.goodsDoc.descriptionEn = body.description;
         this.success = '英文描述已生成';
       });
       this.loading = false;
@@ -2538,7 +2538,7 @@ createApp({
     async generateMulti() {
       this.loading = true;
       await this.wrap(async () => {
-        const body = await this.api('/generateMulti', 'POST', { goodsDoc: this.goodsDoc, description: this.goodsDoc.description });
+        const body = await this.api('/generateMulti', 'POST', { goodsDoc: this.goodsDoc, description: this.goodsDoc.descriptionEn });
         if (body.seo) {
           Object.values(body.seo).forEach(s => { s.keywordsText = (s.keywords || []).join(', '); });
         }

@@ -112,9 +112,24 @@ git commit -m "feat: 新增 hq_goods_doc_record 建表DDL"
 项目当前没有分页拦截器，`selectPage` 不会真正分页，需新增配置。
 
 **Files:**
+- Modify: `pom.xml`
 - Create: `src/main/java/com/hq/goods/lang/config/MybatisPlusConfig.java`
 
-- [ ] **Step 1: 新建配置类**
+> ⚠️ MyBatis-Plus 3.5.9+ 将 `PaginationInnerInterceptor` 拆到独立模块 `mybatis-plus-jsqlparser`，必须显式引入，否则分页插件编译报"找不到符号"。已验证 Maven Central 存在 `com.baomidou:mybatis-plus-jsqlparser:3.5.17`。
+
+- [ ] **Step 1: 在 `pom.xml` 添加 mybatis-plus-jsqlparser 依赖**
+
+在 `pom.xml` 的 `<dependencies>` 内、`mybatis-plus-boot-starter` 依赖之后加入：
+
+```xml
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-jsqlparser</artifactId>
+            <version>3.5.17</version>
+        </dependency>
+```
+
+- [ ] **Step 2: 新建配置类**
 
 ```java
 package com.hq.goods.lang.config;

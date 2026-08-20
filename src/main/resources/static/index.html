@@ -51,15 +51,46 @@
   .kv { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px 16px; font-size: 13px; }
   .kv div b { color: #666; font-weight: 500; }
   .banner { background: #fef7e0; border: 1px solid #f9c74f; color: #8a6d1a; border-radius: 6px; padding: 8px 14px; margin-bottom: 12px; font-size: 13px; }
+
+  /* ============ 左侧菜单 ============ */
+  .app { display: flex; min-height: 100vh; align-items: stretch; }
+  .sidebar { width: 200px; flex-shrink: 0; background: #fff; border-right: 1px solid #e5e5e5; position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 12px 0; }
+  .menu-title { display: flex; align-items: center; justify-content: space-between; padding: 11px 20px; font-size: 14px; color: #333; cursor: pointer; user-select: none; }
+  .menu-title:hover { background: #f5f5f5; }
+  .arrow { font-size: 12px; color: #999; }
+  .submenu { list-style: none; background: #fafafa; border-top: 1px solid #f5f5f5; }
+  .submenu-item { padding: 10px 20px 10px 40px; font-size: 13px; color: #555; cursor: pointer; }
+  .submenu-item:hover { color: #1a73e8; background: #f0f4ff; }
+  .submenu-item.active { background: #1a73e8; color: #fff; }
+  .content { flex: 1; min-width: 0; padding: 20px 24px; }
+  .content h1 { text-align: left; }
 </style>
 </head>
 <body>
 <div id="app">
-  <div class="container">
-    <h1>🌐 商品资料管理</h1>
-    <p class="subtitle">AI 解析 · 英文描述 · 多语言 · SEO</p>
+  <div class="app">
+    <aside class="sidebar">
+      <div v-for="m in menus" :key="m.key" class="menu-item">
+        <div class="menu-title" @click="toggleMenu(m)">
+          <span>{{ m.label }}</span>
+          <span class="arrow">{{ expandedMenus[m.key] ? '▾' : '▸' }}</span>
+        </div>
+        <ul v-show="expandedMenus[m.key]" class="submenu">
+          <li v-for="c in m.children" :key="c.key" class="submenu-item"
+              :class="{ active: activeMenu === c.key }"
+              @click="selectMenu(m, c)">{{ c.label }}</li>
+        </ul>
+      </div>
+    </aside>
+    <main class="content">
+      <h1>🌐 商品资料管理</h1>
+      <p class="subtitle">AI 解析 · 英文描述 · 多语言 · SEO</p>
 
-    <nav>
+      <div v-if="featureDeveloping" class="card" style="text-align:center;">
+        <p style="color:#999;padding:40px 0;">🚧 「{{ activeMenuLabel }}」功能开发中</p>
+      </div>
+
+    <nav v-if="!featureDeveloping">
       <button :class="{active: view==='workbench'}" @click="switchView('workbench')">工作台</button>
       <button :class="{active: view==='list'}" @click="goList()">历史记录</button>
     </nav>
@@ -67,6 +98,9 @@
     <div v-if="error" class="error">{{ error }}</div>
     <div v-if="success" class="success">{{ success }}</div>
     <div v-if="editingId" class="banner">正在编辑记录 #{{ editingId }}，保存后更新该记录。 <a href="javascript:;" @click="cancelEdit()" style="color:#1a73e8">取消编辑</a></div>
+
+    <!-- ============ 当前页面（商品资料） ============ -->
+    <template v-if="!featureDeveloping">
 
     <!-- ============ 工作台 ============ -->
     <template v-if="view==='workbench'">
@@ -255,6 +289,8 @@
         </template>
       </div>
     </template>
+    </template>
+    </main>
   </div>
 </div>
 
@@ -272,6 +308,23 @@ createApp({
       editingId: null, sourceType: null,
       records: [], page: 1, size: 10, total: 0, totalPages: 0,
       detail: null,
+      activeMenu: 'goods',
+      featureDeveloping: false,
+      expandedMenus: { goods: true },
+      menus: [
+        { key: 'goods', label: '商品资料', children: [{ key: 'goods', label: '商品列表' }] },
+        { key: 'partner', label: '合作商', children: [{ key: 'partner', label: '合作商列表' }] },
+        { key: 'stock', label: '库存定价', children: [{ key: 'stock', label: '价格列表' }] },
+        { key: 'goodsOps', label: '商品运营', children: [{ key: 'goodsOps', label: '运营列表' }] },
+        { key: 'base', label: '基础服务', children: [{ key: 'base', label: '服务列表' }] },
+        { key: 'system', label: '系统管理', children: [{ key: 'system', label: '系统设置' }] },
+        { key: 'activity', label: '活动运营管理', children: [{ key: 'activity', label: '活动列表' }] },
+        { key: 'market', label: '市场推广管理', children: [{ key: 'market', label: '推广列表' }] },
+        { key: 'marketing', label: '营销中心', children: [{ key: 'marketing', label: '营销列表' }] },
+        { key: 'content', label: '内容管理', children: [{ key: 'content', label: '内容列表' }] },
+        { key: 'dashboard', label: '数据看板', children: [{ key: 'dashboard', label: '数据看板' }] },
+        { key: 'partnerMgmt', label: '合作商管理', children: [{ key: 'partnerMgmt', label: '合作商管理列表' }] }
+      ],
       langLabels: { en: '🇬🇧 English', zh: '🇨🇳 中文', zhTw: '🇨🇳 繁体中文', ja: '🇯🇵 日本語', ru: '🇷🇺 Русский' },
       seoLabels: { zh: '中文 SEO', en: 'English SEO', ja: '日本語 SEO', ru: 'Русский SEO' }
     };
@@ -292,6 +345,19 @@ createApp({
     },
     switchView(v) { this.view = v; this.clearMsg(); },
     goList() { this.page = 1; this.switchView('list'); this.loadList(); },
+
+    toggleMenu(m) {
+      this.expandedMenus[m.key] = !this.expandedMenus[m.key];
+      // 一级菜单「商品资料」点击即切回当前页面
+      if (m.key === 'goods') {
+        this.activeMenu = 'goods';
+        this.featureDeveloping = false;
+      }
+    },
+    selectMenu(m, c) {
+      this.activeMenu = c.key;
+      this.featureDeveloping = (c.key !== 'goods');
+    },
 
     normalizeVo(vo) {
       if (!vo.parameters) vo.parameters = [];
@@ -423,6 +489,15 @@ createApp({
       } catch (e) {
         this.error = '复制失败，请手动复制';
       }
+    }
+    },
+  computed: {
+    activeMenuLabel() {
+      for (const m of this.menus) {
+        const c = m.children.find(x => x.key === this.activeMenu);
+        if (c) return c.label;
+      }
+      return '';
     }
   }
 }).mount('#app');

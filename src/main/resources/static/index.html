@@ -26,6 +26,8 @@
   button:disabled { background: #a0c4ff; cursor: not-allowed; }
   button.secondary { background: #f0f2f5; color: #555; }
   button.danger { background: #d93025; }
+  .back-btn { background: #fff; color: #1a73e8; border: 1px solid #1a73e8; }
+  .back-btn:hover { background: #e8f0fe; }
   .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
   .field label { display: block; font-size: 12px; color: #888; margin-bottom: 4px; }
   .field input, .field select { width: 100%; }
@@ -64,6 +66,7 @@
   .submenu-item.active { background: #1a73e8; color: #fff; }
   .content { flex: 1; min-width: 0; padding: 20px 24px; }
   .content h1 { text-align: left; }
+  .page-title { font-size: 18px; color: #333; margin-bottom: 12px; border-left: 3px solid #1a73e8; padding-left: 8px; }
 </style>
 </head>
 <body>
@@ -90,10 +93,7 @@
         <p style="color:#999;padding:40px 0;">🚧 「{{ activeMenuLabel }}」功能开发中</p>
       </div>
 
-    <nav v-if="!featureDeveloping">
-      <button :class="{active: view==='workbench'}" @click="switchView('workbench')">工作台</button>
-      <button :class="{active: view==='list'}" @click="goList()">历史记录</button>
-    </nav>
+    <!-- 导航：列表页内「新增商品」进入录入页，录入页「返回列表」回到列表 -->
 
     <div v-if="error" class="error">{{ error }}</div>
     <div v-if="success" class="success">{{ success }}</div>
@@ -102,10 +102,14 @@
     <!-- ============ 当前页面（商品资料） ============ -->
     <template v-if="!featureDeveloping">
 
-    <!-- ============ 工作台 ============ -->
+    <!-- ============ 新增/编辑录入 ============ -->
     <template v-if="view==='workbench'">
-      <div class="card">
-        <h3>① 输入与解析</h3>
+      <h3 class="page-title">{{ editingId ? '资料编辑' : '资料新增' }}</h3>
+      <div class="row" style="margin-bottom:12px;">
+        <button class="back-btn" @click="goList">← 返回列表</button>
+      </div>
+      <div class="card" v-if="!editingId">
+        <h3>① 新增商品：输入与解析</h3>
         <div class="row">
           <input type="text" v-model="partNumber" placeholder="型号，如 STM32F103C8T6" @keyup.enter="parsePart">
           <input type="text" v-model="brand" placeholder="品牌（可选）">
@@ -207,16 +211,21 @@
     <!-- ============ 历史列表 ============ -->
     <template v-if="view==='list'">
       <div class="card">
-        <h3>历史记录</h3>
+        <h3>商品列表</h3>
+        <div class="row" style="margin-bottom:12px;">
+          <input type="text" v-model="partNumberSearch" placeholder="请输入型号" @keyup.enter="searchList" style="width:260px;">
+          <button class="secondary" @click="searchList">查询</button>
+        </div>
+        <div class="row" style="margin-bottom:12px;">
+          <button @click="goNew">➕ 新增</button>
+        </div>
         <table>
           <thead><tr><th>ID</th><th>型号</th><th>品牌</th><th>分类</th><th>封装</th><th>创建时间</th><th>操作</th></tr></thead>
           <tbody>
             <tr v-for="r in records" :key="r.id">
               <td>{{ r.id }}</td><td>{{ r.partNumber }}</td><td>{{ r.brand }}</td><td>{{ r.category }}</td><td>{{ r.packageType }}</td><td>{{ r.cTime }}</td>
               <td>
-                <button class="secondary" @click="viewDetail(r.id)">查看</button>
                 <button class="secondary" @click="editRecord(r.id)">编辑</button>
-                <button class="danger" @click="delRecord(r.id)">删除</button>
               </td>
             </tr>
             <tr v-if="!records.length"><td colspan="7" style="text-align:center;color:#aaa;">暂无记录</td></tr>
@@ -301,9 +310,9 @@ const API = '/doc/api/doc';
 createApp({
   data() {
     return {
-      view: 'workbench',
+      view: 'list',
       loading: false, error: '', success: '',
-      partNumber: '', brand: '', rawText: '',
+      partNumber: '', brand: '', rawText: '', partNumberSearch: '',
       goodsDoc: null, multiResult: null, newApp: '',
       editingId: null, sourceType: null,
       records: [], page: 1, size: 10, total: 0, totalPages: 0,
@@ -345,18 +354,32 @@ createApp({
     },
     switchView(v) { this.view = v; this.clearMsg(); },
     goList() { this.page = 1; this.switchView('list'); this.loadList(); },
+    goNew() {
+      this.goodsDoc = null; this.multiResult = null; this.newApp = '';
+      this.partNumber = ''; this.brand = ''; this.rawText = '';
+      this.editingId = null; this.sourceType = null;
+      this.view = 'workbench';
+      this.clearMsg();
+    },
+    searchList() { this.page = 1; this.loadList(); },
 
     toggleMenu(m) {
       this.expandedMenus[m.key] = !this.expandedMenus[m.key];
-      // 一级菜单「商品资料」点击即切回当前页面
+      // 一级菜单「商品资料」点击即切回商品列表
       if (m.key === 'goods') {
         this.activeMenu = 'goods';
         this.featureDeveloping = false;
+        this.goList();
       }
     },
     selectMenu(m, c) {
       this.activeMenu = c.key;
-      this.featureDeveloping = (c.key !== 'goods');
+      if (c.key === 'goods') {
+        this.featureDeveloping = false;
+        this.goList();
+      } else {
+        this.featureDeveloping = true;
+      }
     },
 
     normalizeVo(vo) {
@@ -439,13 +462,18 @@ createApp({
         this.success = this.editingId ? '已更新记录 #' + id : '已保存记录 #' + id;
         this.editingId = null;
         this.rawText = '';
+        this.partNumberSearch = '';
+        this.view = 'list';
+        this.loadList();
       });
       this.loading = false;
     },
 
     async loadList() {
       await this.wrap(async () => {
-        const body = await this.api('/list?page=' + this.page + '&size=' + this.size);
+        const pn = (this.partNumberSearch || '').trim();
+        const url = '/list?page=' + this.page + '&size=' + this.size + (pn ? '&partNumber=' + encodeURIComponent(pn) : '');
+        const body = await this.api(url);
         this.records = body.list || [];
         this.total = body.total || 0;
         this.totalPages = Math.ceil(this.total / this.size) || 1;
@@ -499,6 +527,9 @@ createApp({
       }
       return '';
     }
+  },
+  mounted() {
+    this.loadList();
   }
 }).mount('#app');
 </script>

@@ -59,11 +59,12 @@ public class GoodsDocController {
         return ResultBody.success(goodsDocService.save(req));
     }
 
-    /** ⑥ 历史分页列表 */
+    /** ⑥ 历史分页列表（按型号精确搜索，partNumber 可空） */
     @GetMapping("/list")
     public String list(@RequestParam(defaultValue = "1") int page,
-                       @RequestParam(defaultValue = "20") int size) {
-        return ResultBody.success(goodsDocService.list(page, size));
+                       @RequestParam(defaultValue = "20") int size,
+                       @RequestParam(required = false) String partNumber) {
+        return ResultBody.success(goodsDocService.list(page, size, partNumber));
     }
 
     /** ⑦ 后台详情 */

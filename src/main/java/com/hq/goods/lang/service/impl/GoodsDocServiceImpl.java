@@ -184,16 +184,20 @@ public class GoodsDocServiceImpl implements GoodsDocService {
     }
 
     @Override
-    public PageResult<RecordVo> list(int page, int size) {
+    public PageResult<RecordVo> list(int page, int size, String partNumber) {
         if (page < 1) {
             page = 1;
         }
         if (size < 1 || size > 100) {
             size = 20;
         }
+        QueryWrapper<GoodsDocRecord> qw = new QueryWrapper<GoodsDocRecord>().eq("delete_status", 0);
+        if (StringUtils.isNotBlank(partNumber)) {
+            qw.eq("part_number", partNumber.trim());
+        }
+        qw.orderByDesc("id");
         Page<GoodsDocRecord> p = new Page<>(page, size);
-        goodsDocRecordDao.selectPage(p,
-                new QueryWrapper<GoodsDocRecord>().eq("delete_status", 0).orderByDesc("c_time"));
+        goodsDocRecordDao.selectPage(p, qw);
         List<RecordVo> list = p.getRecords().stream().map(this::toRecordVo).collect(Collectors.toList());
         return new PageResult<>(p.getTotal(), list);
     }

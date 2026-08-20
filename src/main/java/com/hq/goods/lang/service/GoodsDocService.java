@@ -33,8 +33,8 @@ public interface GoodsDocService {
     /** 保存（无 id 新增 / 有 id 更新） */
     Long save(SaveReq req);
 
-    /** 历史分页列表 */
-    PageResult<RecordVo> list(int page, int size);
+    /** 历史分页列表（按型号精确搜索，partNumber 可空） */
+    PageResult<RecordVo> list(int page, int size, String partNumber);
 
     /** 后台详情 */
     GoodsDocRecordVo detail(Long id);

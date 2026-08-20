@@ -130,41 +130,41 @@
       <div class="card" v-if="goodsDoc">
         <h3>② 基本资料（可编辑）</h3>
         <div class="grid3">
-          <div class="field"><label>型号 *</label><input v-model="goodsDoc.partNumber" placeholder="型号"></div>
-          <div class="field"><label>品牌</label><input v-model="goodsDoc.brand" placeholder="品牌"></div>
-          <div class="field"><label>分类</label><input v-model="goodsDoc.category" placeholder="分类"></div>
-          <div class="field"><label>子分类</label><input v-model="goodsDoc.subcategory" placeholder="子分类"></div>
-          <div class="field"><label>系列</label><input v-model="goodsDoc.series" placeholder="系列"></div>
-          <div class="field"><label>封装</label><input v-model="goodsDoc.packageType" placeholder="封装"></div>
-          <div class="field"><label>安装类型</label><input v-model="goodsDoc.mountingType" placeholder="SMD/THT"></div>
-          <div class="field"><label>引脚数</label><input type="number" v-model.number="goodsDoc.pinCount" placeholder="引脚数"></div>
-          <div class="field"><label>尺寸</label><input v-model="goodsDoc.dimensions" placeholder="尺寸"></div>
-          <div class="field"><label>工作温度</label><input v-model="goodsDoc.operatingTemp" placeholder="如 -40~+85℃"></div>
-          <div class="field"><label>存储温度</label><input v-model="goodsDoc.storageTemp" placeholder="存储温度"></div>
-          <div class="field"><label>质量等级</label><input v-model="goodsDoc.grade" placeholder="质量等级"></div>
-          <div class="field"><label>RoHS</label><input v-model="goodsDoc.rohs" placeholder="RoHS/环保"></div>
-          <div class="field"><label>包装方式</label><input v-model="goodsDoc.packaging" placeholder="编带/托盘/管装"></div>
-          <div class="field"><label>MOQ</label><input v-model="goodsDoc.moq" placeholder="最小起订量"></div>
-          <div class="field"><label>单位</label><input v-model="goodsDoc.unit" placeholder="pcs/盘"></div>
-          <div class="field"><label>海关编码</label><input v-model="goodsDoc.hsCode" placeholder="海关编码"></div>
-          <div class="field"><label>交期</label><input v-model="goodsDoc.leadTime" placeholder="交期"></div>
-          <div class="field"><label>价格区间</label><input v-model="goodsDoc.priceRange" placeholder="价格区间"></div>
-          <div class="field"><label>供货状态</label><input v-model="goodsDoc.availability" placeholder="现货/订货"></div>
-          <div class="field"><label>数据手册URL</label><input v-model="goodsDoc.datasheetUrl" placeholder="业务员维护"></div>
-          <div class="field"><label>图片URL</label><input v-model="goodsDoc.imageUrl" placeholder="业务员维护"></div>
+          <div class="field"><label>型号 *</label><input v-model="goodsDoc.partNumber"></div>
+          <div class="field"><label>品牌</label><input v-model="goodsDoc.brand"></div>
+          <div class="field"><label>分类</label><input v-model="goodsDoc.category"></div>
+          <div class="field"><label>子分类</label><input v-model="goodsDoc.subcategory"></div>
+          <div class="field"><label>系列</label><input v-model="goodsDoc.series"></div>
+          <div class="field"><label>封装</label><input v-model="goodsDoc.packageType"></div>
+          <div class="field"><label>安装类型</label><input v-model="goodsDoc.mountingType"></div>
+          <div class="field"><label>引脚数</label><input type="number" v-model.number="goodsDoc.pinCount"></div>
+          <div class="field"><label>尺寸</label><input v-model="goodsDoc.dimensions"></div>
+          <div class="field"><label>工作温度</label><input v-model="goodsDoc.operatingTemp"></div>
+          <div class="field"><label>存储温度</label><input v-model="goodsDoc.storageTemp"></div>
+          <div class="field"><label>质量等级</label><input v-model="goodsDoc.grade"></div>
+          <div class="field"><label>RoHS</label><input v-model="goodsDoc.rohs"></div>
+          <div class="field"><label>包装方式</label><input v-model="goodsDoc.packaging"></div>
+          <div class="field"><label>MOQ</label><input v-model="goodsDoc.moq"></div>
+          <div class="field"><label>单位</label><input v-model="goodsDoc.unit"></div>
+          <div class="field"><label>海关编码</label><input v-model="goodsDoc.hsCode"></div>
+          <div class="field"><label>交期</label><input v-model="goodsDoc.leadTime"></div>
+          <div class="field"><label>价格区间</label><input v-model="goodsDoc.priceRange"></div>
+          <div class="field"><label>供货状态</label><input v-model="goodsDoc.availability"></div>
+          <div class="field"><label>数据手册URL</label><input v-model="goodsDoc.datasheetUrl"></div>
+          <div class="field"><label>图片URL</label><input v-model="goodsDoc.imageUrl"></div>
         </div>
         <div style="margin-top:12px;">
           <span class="label">参数（动态增删）</span>
           <div v-for="(p, i) in goodsDoc.parameters" :key="i" class="param-row">
-            <input v-model="p.name" placeholder="参数名">
-            <input v-model="p.value" placeholder="数值">
-            <input v-model="p.unit" placeholder="单位">
+            <input v-model="p.name">
+            <input v-model="p.value">
+            <input v-model="p.unit">
             <button class="secondary" @click="removeParam(i)">删除</button>
           </div>
           <button class="secondary" @click="addParam">+ 添加参数</button>
           <span class="label">应用领域</span>
           <div class="row">
-            <input type="text" v-model="newApp" placeholder="如：消费电子" style="flex:1" @keyup.enter="addApp">
+            <input type="text" v-model="newApp" style="flex:1" @keyup.enter="addApp">
             <button class="secondary" @click="addApp">添加</button>
           </div>
           <div class="row" style="margin-top:6px;">

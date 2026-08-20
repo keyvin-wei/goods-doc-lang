@@ -194,7 +194,7 @@ public class HttpUtil {
 
 
     /**
-     * 请求AiHubMix
+     * 请求Ai API
      * @param url 接口地址
      * @param bodyParam post json参数
      * @return ai返回的content内容
@@ -204,7 +204,7 @@ public class HttpUtil {
         long start = System.currentTimeMillis();
         try {
             String result = postAihubmixStr(url, bodyParam);
-            log.info("AiHubMix返回，AI请求结果花费：{}ms，数据：{}：", System.currentTimeMillis()-start, result);
+            log.info("Ai API返回结果花费：{}ms，数据：{}：", System.currentTimeMillis()-start, result);
             JSONObject obj = JSONObject.parseObject(result);
             JSONArray choices = obj.getJSONArray("choices");
             if(choices.size()>0){
@@ -216,10 +216,10 @@ public class HttpUtil {
                 }
             }
         }catch (SocketTimeoutException e){
-            log.warn("AiHubMix请求超时异常！" + e.getMessage());
+            log.warn("Ai API请求超时异常！" + e.getMessage());
             log.info("详细信息：", e);
         }catch (Exception e){
-            log.error("AiHubMix请求报错！" + e.getMessage());
+            log.error("Ai API请求报错！" + e.getMessage());
             log.info("详细信息：", e);
         }
         return "";
@@ -227,7 +227,7 @@ public class HttpUtil {
 
 
     /**
-     * 请求AiHubMix，返回对象
+     * 请求Ai API，返回对象
      * @param url 接口地址
      * @param bodyParam post json参数
      * @return 接口响应完整json字符串

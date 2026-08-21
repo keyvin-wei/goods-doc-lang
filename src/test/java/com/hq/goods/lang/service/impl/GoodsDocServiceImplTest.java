@@ -1,5 +1,15 @@
 package com.hq.goods.lang.service.impl;
 
+import com.hq.goods.lang.bean.CustomException;
+import com.hq.goods.lang.bean.vo.PriceTier;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+
 import com.alibaba.fastjson.JSON;
 import com.hq.goods.lang.bean.dto.AiTranslateDto;
 import com.hq.goods.lang.bean.dto.GenerateDescReq;
@@ -64,6 +74,29 @@ public class GoodsDocServiceImplTest {
         when(translatorProviderFactory.getProvider()).thenReturn(translatorProvider);
         when(translationService.recallTerms(anyString())).thenReturn(Collections.emptyList());
         when(ragService.searchTopK(anyString(), anyInt())).thenReturn(Collections.emptyList());
+    }
+
+    private HttpServletRequest requestWithLang(String lang) {
+        HttpServletRequest req = mock(HttpServletRequest.class);
+        when(req.getCookies()).thenReturn(
+                lang == null ? new Cookie[0] : new Cookie[]{new Cookie("lang", lang)});
+        return req;
+    }
+
+    private GoodsDocRecord baseRecord() {
+        GoodsDocRecord r = new GoodsDocRecord();
+        r.setId(1L);
+        r.setPartNumber("STM32F103C8T6");
+        r.setBrand("ST");
+        r.setCategory("MCU");
+        r.setSubcategory("Cortex-M3");
+        r.setPackageType("LQFP48");
+        r.setParameters(JSON.toJSONString(Collections.emptyList()));
+        r.setApplications(JSON.toJSONString(Collections.emptyList()));
+        r.setMultilingual("{\"en\":\"English desc\",\"zh\":\"中文描述\",\"ja\":\"日本語\",\"ru\":\"Русский\"}");
+        r.setSeo("{\"en\":{\"title\":\"T\",\"keywords\":[\"a\"],\"description\":\"D\"}}");
+        r.setDescriptionEn("English desc");
+        return r;
     }
 
     @Test
@@ -198,7 +231,7 @@ public class GoodsDocServiceImplTest {
         r.setDescriptionEn("English desc");
         when(goodsDocRecordDao.selectById(1L)).thenReturn(r);
 
-        ProductVo vo = service.product(1L);
+        ProductVo vo = service.product(1L, requestWithLang(null));
         assertEquals("STM32F103C8T6", vo.getPartNumber());
         assertEquals("desc", vo.getMultilingual().get("en"));
         assertEquals("T", vo.getSeo().get("en").getTitle());
@@ -209,5 +242,54 @@ public class GoodsDocServiceImplTest {
     public void testDelete() {
         service.delete(9L);
         verify(goodsDocRecordDao).updateById(any(GoodsDocRecord.class));
+    }
+
+    @Test
+    public void testProductLangLocalized() {
+        when(goodsDocRecordDao.selectById(1L)).thenReturn(baseRecord());
+        assertEquals("中文描述", service.product(1L, requestWithLang("zh")).getDescription());
+        assertEquals("日本語", service.product(1L, requestWithLang("ja")).getDescription());
+        assertEquals("Русский", service.product(1L, requestWithLang("ru")).getDescription());
+    }
+
+    @Test
+    public void testProductLangFallbackAndDefault() {
+        when(goodsDocRecordDao.selectById(1L)).thenReturn(baseRecord());
+        // cookie 语言不在 multilingual 中 → 回退 en
+        assertEquals("English desc", service.product(1L, requestWithLang("fr")).getDescription());
+        // 无 cookie → 默认 en
+        assertEquals("English desc", service.product(1L, requestWithLang(null)).getDescription());
+    }
+
+    @Test
+    public void testProductRandomStable() {
+        when(goodsDocRecordDao.selectById(1L)).thenReturn(baseRecord());
+        ProductVo a = service.product(1L, requestWithLang("en"));
+        ProductVo b = service.product(1L, requestWithLang("en"));
+        assertEquals(a.getStock(), b.getStock());
+        assertEquals(4, a.getPrices().size());
+        assertEquals(a.getPrices().get(0).getUnitPrice(), b.getPrices().get(0).getUnitPrice());
+        assertEquals(a.getPrices().get(3).getUnitPrice(), b.getPrices().get(3).getUnitPrice());
+    }
+
+    @Test
+    public void testProductPricesDecreasing() {
+        when(goodsDocRecordDao.selectById(1L)).thenReturn(baseRecord());
+        List<PriceTier> prices = service.product(1L, requestWithLang("en")).getPrices();
+        assertEquals(4, prices.size());
+        assertEquals("1+", prices.get(0).getQtyLabel());
+        assertEquals("100+", prices.get(3).getQtyLabel());
+        assertTrue(prices.get(0).getUnitPrice().compareTo(prices.get(1).getUnitPrice()) > 0);
+        assertTrue(prices.get(1).getUnitPrice().compareTo(prices.get(2).getUnitPrice()) > 0);
+        assertTrue(prices.get(2).getUnitPrice().compareTo(prices.get(3).getUnitPrice()) > 0);
+        // 总价 = 单价 × 起购量
+        assertEquals(prices.get(1).getUnitPrice().multiply(BigDecimal.valueOf(5)),
+                prices.get(1).getExtPrice());
+    }
+
+    @Test(expected = CustomException.class)
+    public void testProductNotFound() {
+        when(goodsDocRecordDao.selectById(99L)).thenReturn(null);
+        service.product(99L, requestWithLang("en"));
     }
 }

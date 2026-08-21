@@ -21,6 +21,7 @@ import com.hq.goods.lang.bean.vo.GoodsDocRecordVo;
 import com.hq.goods.lang.bean.vo.GoodsDocVo;
 import com.hq.goods.lang.bean.vo.PageResult;
 import com.hq.goods.lang.bean.vo.ParamItem;
+import com.hq.goods.lang.bean.vo.PriceTier;
 import com.hq.goods.lang.bean.vo.ProductVo;
 import com.hq.goods.lang.bean.vo.RagHit;
 import com.hq.goods.lang.bean.vo.RecordVo;
@@ -37,13 +38,19 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
@@ -55,6 +62,12 @@ public class GoodsDocServiceImpl implements GoodsDocService {
 
     private static final String MODEL = "gpt-5.2";
     private static final int RAG_TOP_K = 3;
+    /** 落地页支持语言（预留可扩展） */
+    private static final List<String> SUPPORTED_LANGS = Arrays.asList("en", "zh", "ja", "ru");
+    private static final String DEFAULT_LANG = "en";
+    /** 阶梯档位：起购量 → 单价递减系数 */
+    private static final int[] TIER_QTY = {1, 5, 10, 100};
+    private static final double[] TIER_FACTOR = {1.00, 0.85, 0.80, 0.62};
 
     @Autowired
     private TranslatorProviderFactory translatorProviderFactory;
@@ -225,9 +238,27 @@ public class GoodsDocServiceImpl implements GoodsDocService {
     }
 
     @Override
-    public ProductVo product(Long id) {
+    public ProductVo product(Long id, HttpServletRequest request) {
+        return buildProduct(id, resolveLang(request));
+    }
+
+    /** 从 cookie 解析当前语言，无 cookie 或非法值回退默认 en */
+    String resolveLang(HttpServletRequest request) {
+        if (request == null || request.getCookies() == null) {
+            return DEFAULT_LANG;
+        }
+        for (Cookie c : request.getCookies()) {
+            if ("lang".equals(c.getName()) && SUPPORTED_LANGS.contains(c.getValue())) {
+                return c.getValue();
+            }
+        }
+        return DEFAULT_LANG;
+    }
+
+    private ProductVo buildProduct(Long id, String lang) {
         GoodsDocRecord r = requireRecord(id);
         ProductVo vo = new ProductVo();
+        vo.setId(r.getId());
         vo.setPartNumber(r.getPartNumber());
         vo.setBrand(r.getBrand());
         vo.setCategory(r.getCategory());
@@ -241,7 +272,33 @@ public class GoodsDocServiceImpl implements GoodsDocService {
         vo.setSeo(parseJsonMap(r.getSeo(), SeoVo.class));
         vo.setImageUrl(r.getImageUrl());
         vo.setDatasheetUrl(r.getDatasheetUrl());
+        // 本地化描述：multilingual[lang] 无则回退英文
+        Map<String, String> multi = vo.getMultilingual();
+        String desc = multi != null ? multi.get(lang) : null;
+        vo.setDescription(StringUtils.isBlank(desc) ? r.getDescriptionEn() : desc);
+        // 随机库存与阶梯价（id 为种子，同型号每次刷新稳定）
+        Random rnd = new Random(id);
+        vo.setStock(1 + rnd.nextInt(999));
+        vo.setPrices(buildPrices(rnd));
         return vo;
+    }
+
+    private List<PriceTier> buildPrices(Random rnd) {
+        int baseCents = 50 + rnd.nextInt(4950);            // 0.50 ~ 50.00 USD
+        BigDecimal base = BigDecimal.valueOf(baseCents, 2);
+        List<PriceTier> list = new ArrayList<>(TIER_QTY.length);
+        for (int i = 0; i < TIER_QTY.length; i++) {
+            BigDecimal unit = base.multiply(BigDecimal.valueOf(TIER_FACTOR[i]))
+                    .setScale(4, RoundingMode.HALF_UP);
+            BigDecimal ext = unit.multiply(BigDecimal.valueOf(TIER_QTY[i]))
+                    .setScale(4, RoundingMode.HALF_UP);
+            PriceTier t = new PriceTier();
+            t.setQtyLabel(TIER_QTY[i] + "+");
+            t.setUnitPrice(unit);
+            t.setExtPrice(ext);
+            list.add(t);
+        }
+        return list;
     }
 
     private GoodsDocRecord requireRecord(Long id) {

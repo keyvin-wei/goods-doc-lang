@@ -13,6 +13,8 @@ import com.hq.goods.lang.bean.vo.PageResult;
 import com.hq.goods.lang.bean.vo.ProductVo;
 import com.hq.goods.lang.bean.vo.RecordVo;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * 外贸商品文档编排服务
  */
@@ -42,6 +44,6 @@ public interface GoodsDocService {
     /** 逻辑删除 */
     void delete(Long id);
 
-    /** 客户页面公开数据 */
-    ProductVo product(Long id);
+    /** 客户页面公开数据（多语言按 cookie lang，默认 en） */
+    ProductVo product(Long id, HttpServletRequest request);
 }

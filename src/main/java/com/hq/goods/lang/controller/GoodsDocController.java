@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 /**
@@ -80,9 +81,9 @@ public class GoodsDocController {
         return ResultBody.success();
     }
 
-    /** ⑨ 客户页面公开数据（官网 SSR） */
+    /** ⑨ 客户页面公开数据（官网 SSR；多语言按 cookie lang） */
     @GetMapping("/product/{id}")
-    public String product(@PathVariable Long id) {
-        return ResultBody.success(goodsDocService.product(id));
+    public String product(@PathVariable Long id, HttpServletRequest request) {
+        return ResultBody.success(goodsDocService.product(id, request));
     }
 }

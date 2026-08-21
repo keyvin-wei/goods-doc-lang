@@ -17,7 +17,7 @@
 
 - **服务端渲染 Thymeleaf**：`pom.xml` 新增 `spring-boot-starter-thymeleaf`；模板 `src/main/resources/templates/detail.html`
 - 新增 **SSR 控制器**（`@Controller`），直接调用 `goodsDocService.product(id, request)`（与现有 `/api/doc/product/{id}` 同一数据源，避免二次 HTTP 调用）
-- 静态图片：`demo1.jpg / demo2.jpg / demo3.jpg` 放 `src/main/resources/static/`（用户自备，页面**写死**引用，不按型号动态化）
+- 静态图片：`src/main/resources/static/images/default/demo1.png / demo2.png / demo3.png`（300×300，用户已放置；静态 URL `/images/default/demo1.png`，页面**写死**引用，不按型号动态化）
 - 前端零构建：纯 HTML + 少量内联 JS/CSS
 
 ## 3. 多语言机制
@@ -55,7 +55,7 @@
 | 顶栏 | 写死静态：HQ online Logo + 搜索框（占位 `Part#/Keyword` + 热门词 RP2350A 等）+ 导航（Products / BOM Tool / Request Quote / PCB Service / About Us / Contact Us / Blog）+ 邮箱 + 购物车图标(20)。**全无功能** |
 | 语言切换 | 顶栏右侧（用户图标旁）下拉框：English / 中文 / 日本語 / Русский；onchange → 写 cookie `lang` → `location.reload()` 整页重渲染 |
 | 面包屑 | `Home > {category} > {subcategory 有则显示，无则省略} > {partNumber}` |
-| 主区左栏 | `demo1/2/3.jpg` 三图 + 缩略图切换 + 「Images are for reference only」；字段：Mfr Part #=partNumber、Manufacturer=brand、HQ Part #=记录id、Package=packageType、Lead Time=写死 Ship immediately、Description=本地化描述、Customer # 输入框(无功能)、Datasheet 链接(datasheetUrl 有则显示，无则隐藏) |
+| 主区左栏 | `images/default/demo1.png / demo2.png / demo3.png` 三图 + 缩略图切换 + 「Images are for reference only」；字段：Mfr Part #=partNumber、Manufacturer=brand、HQ Part #=记录id、Package=packageType、Lead Time=写死 Ship immediately、Description=本地化描述、Customer # 输入框(无功能)、Datasheet 链接(datasheetUrl 有则显示，无则隐藏) |
 | 主区右栏 | `{stock} In Stock` + Qty 输入框(默认1) + Minimum 1 / Multiple 1(写死) + Unit Price=$首档 + Ext Price + 红色 **Add to Cart / Buy Now**（存在无功能） |
 | 属性表 | 固定行：Product Type=category+subcategory、Package/Case=packageType；**动态行 = `parameters` 列表**（每个元器件属性不同，后台生成时保存，name → value+unit） |
 | 价格阶梯表 | `Qty \| Unit Price \| Ext Price`，渲染 `prices` 4 档，递减 |

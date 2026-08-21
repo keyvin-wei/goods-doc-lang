@@ -2584,7 +2584,7 @@ printf '在此目录放置默认图片/PDF（如 product-default.png），供业
 
 <script>
 const { createApp } = Vue;
-const API = '/doc/api/doc';
+const API = '/goods/api/doc';
 
 createApp({
   data() {
@@ -2790,7 +2790,7 @@ Expected: 日志出现 `startup success！`，监听 8080。
 
 - [ ] **Step 2: 打开工作台页面**
 
-浏览器访问 `http://localhost:8080/doc/`。
+浏览器访问 `http://localhost:8080/goods/`。
 
 Expected: 显示页面标题"外贸商品信息标准化与多语言 SEO 系统"，三个导航：工作台 / 历史记录。
 
@@ -2812,7 +2812,7 @@ Expected: AI Key 有效时正常生成；翻译失败时该语言为空、英文
 
 - [ ] **Step 6: 验证公开接口**
 
-浏览器访问 `http://localhost:8080/doc/api/doc/product/{id}`（用刚保存的 id）。
+浏览器访问 `http://localhost:8080/goods/api/doc/product/{id}`（用刚保存的 id）。
 
 Expected: 返回 `{code:200, body:{partNumber, multilingual, seo, ...}}`，数据与页面一致。
 

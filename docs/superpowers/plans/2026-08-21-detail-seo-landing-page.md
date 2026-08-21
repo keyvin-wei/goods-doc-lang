@@ -1,8 +1,8 @@
-# 落地页 /doc/detail/{id} Implementation Plan
+# 落地页 /goods/detail/{id} Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** 新增客户可见的 SEO 落地页 `GET /doc/detail/{id}`，服务端渲染（Thymeleaf）后台生成的元器件资料，并输出 Schema.org `Product` JSON-LD 多语言（en/zh/ja/ru）结构化数据。
+**Goal:** 新增客户可见的 SEO 落地页 `GET /goods/detail/{id}`，服务端渲染（Thymeleaf）后台生成的元器件资料，并输出 Schema.org `Product` JSON-LD 多语言（en/zh/ja/ru）结构化数据。
 
 **Architecture:** 后台现有 `hq_goods_doc_record` → `GoodsDocService` 提供 `product(id, request)`（从 cookie `lang` 决定语言、按 id 种子生成稳定随机库存/阶梯价）→ 新增 `DetailController`（`@Controller`）渲染 `templates/detail.html`（fastjson 序列化 JSON-LD 进 model）。页面布局对照 `用户端查看页面-seo落地页.jpg`（HQ Online 元器件商城风格）。
 
@@ -429,7 +429,7 @@ public class DetailControllerTest {
         vo.getSeo().put("en", new SeoVo());
         vo.setPrices(Collections.emptyList());
         when(request.getRequestURL())
-                .thenReturn(new StringBuffer("http://localhost:8080/doc/detail/1"));
+                .thenReturn(new StringBuffer("http://localhost:8080/goods/detail/1"));
         when(request.getCookies()).thenReturn(null);
     }
 
@@ -441,7 +441,7 @@ public class DetailControllerTest {
         verify(model).addAttribute(eq("vo"), eq(vo));
         verify(model).addAttribute(eq("lang"), eq("en"));
         verify(model).addAttribute(eq("pageUrl"),
-                eq("http://localhost:8080/doc/detail/1"));
+                eq("http://localhost:8080/goods/detail/1"));
         verify(model).addAttribute(eq("productJson"), anyString());
     }
 
@@ -958,15 +958,15 @@ git commit -m "feat: 落地页 detail.html（SSR + 语言切换 + JSON-LD 多语
 
 Run: `export JAVA_HOME="D:/Program Files/Java/jdk-11.0.13" && mvn -q spring-boot:run`（后台），随后：
 ```bash
-curl -s http://localhost:8080/doc/detail/1 -o /tmp/detail.html && grep -c "application/ld+json" /tmp/detail.html
-curl -s -H "Cookie: lang=zh" http://localhost:8080/doc/detail/1 | grep -o "中文描述\|English desc" | head -1
-curl -s http://localhost:8080/doc/detail/999 -o /dev/null -w "%{http_code}\n"
+curl -s http://localhost:8080/goods/detail/1 -o /tmp/detail.html && grep -c "application/ld+json" /tmp/detail.html
+curl -s -H "Cookie: lang=zh" http://localhost:8080/goods/detail/1 | grep -o "中文描述\|English desc" | head -1
+curl -s http://localhost:8080/goods/detail/999 -o /dev/null -w "%{http_code}\n"
 ```
 Expected：第 1 条输出 `1`（含 JSON-LD）；第 2 条输出中文描述（cookie 生效）；第 3 条 `404`。
 > 若本地无 id=1 记录，换成库里真实存在的 id；`999` 用不存在 id。
 
 - [ ] **Step 2: 浏览器人工清单（用户执行）**
-1. `http://localhost:8080/doc/detail/{id}`：顶栏 / 面包屑 / 主区左图右信息 / 右栏库存价格按钮 / 属性表 / 价格阶梯表 / 描述 / 页脚 均正常
+1. `http://localhost:8080/goods/detail/{id}`：顶栏 / 面包屑 / 主区左图右信息 / 右栏库存价格按钮 / 属性表 / 价格阶梯表 / 描述 / 页脚 均正常
 2. 顶栏语言下拉切 中文/日本語/Русский → 整页语言切换（cookie 生效，刷新一致）
 3. 查看页面源码：JSON-LD 含 en/zh/ja/ru 四个 `@graph` 节点，`<script type="application/ld+json">` 未转义破坏
 4. 不存在 id → 404 页

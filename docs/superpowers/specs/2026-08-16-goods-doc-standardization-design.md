@@ -56,7 +56,7 @@ GoodsDocServiceImpl（编排 解析→描述→多语言→保存）
 
 ## 四、接口契约（9 个）
 
-统一前缀 `/api/doc`（配合 `context-path=/doc`，完整路径 `/doc/api/doc/*`），响应均为 `ResultBody`。
+统一前缀 `/api/doc`（配合 `context-path=/goods`，完整路径 `/goods/api/doc/*`），响应均为 `ResultBody`。
 
 | # | 方法 | 路径 | 请求 | 响应 body | 用途 |
 |---|------|------|------|-----------|------|
@@ -156,7 +156,7 @@ GoodsDocServiceImpl（编排 解析→描述→多语言→保存）
 
 ## 八、前端页面（Vue3 CDN，`static/index.html`）
 
-单文件、无构建；访问 `http://服务器:8080/doc/`（勿用 `file://` 打开，否则 fetch 跨域失败）。三视图客户端切换：
+单文件、无构建；访问 `http://服务器:8080/goods/`（勿用 `file://` 打开，否则 fetch 跨域失败）。三视图客户端切换：
 
 1. **工作台**
    - 型号+品牌 输入框 + [解析]

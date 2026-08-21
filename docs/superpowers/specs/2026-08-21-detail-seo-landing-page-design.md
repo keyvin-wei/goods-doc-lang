@@ -1,4 +1,4 @@
-# 落地页 /doc/detail/{id} 设计
+# 落地页 /goods/detail/{id} 设计
 
 - 日期：2026-08-21
 - 模块：商品文档（goods-doc-lang）
@@ -8,7 +8,7 @@
 
 后台每天把外贸元器件资料（型号解析 → 描述生成 → 多语言 + SEO）沉淀到 `hq_goods_doc_record`。本文档设计一个**前台用户可见的 SEO 落地页**：
 
-- URL：`http://localhost:8080/doc/detail/{id}`（`context-path=/doc`，模板视图 `/detail/{id}`）
+- URL：`http://localhost:8080/goods/detail/{id}`（`context-path=/goods`，模板视图 `/detail/{id}`）
 - 页面布局参考：`docs/superpowers/diagrams/用户端查看页面-seo落地页.jpg`（HQ Online 风格元器件商城产品详情页）
 - 把后台生成的型号资料渲染成 HTML，并输出 **Schema.org `Product` JSON-LD 多语言结构化数据**，为搜索引擎及未来 AI 搜索提供标准产品信息，提高 AI 推荐曝光
 - 电商区块（库存/价格/购物车）无真实数据：以 **id 为随机种子生成稳定随机值**，仅展示、不做功能
@@ -73,7 +73,7 @@
   "@graph": [
     {
       "@type": "Product",
-      "@id": "https://<host>/doc/detail/{id}",
+      "@id": "https://<host>/goods/detail/{id}",
       "name": "{partNumber}",
       "inLanguage": "en",
       "description": "{multilingual[en] 或 descriptionEn}",
@@ -86,7 +86,7 @@
         "price": "{首档 unitPrice}",
         "priceCurrency": "USD",
         "availability": "https://schema.org/InStock",
-        "url": "https://<host>/doc/detail/{id}"
+        "url": "https://<host>/goods/detail/{id}"
       }
     },
     { "zh" 节点, "ja" 节点, "ru" 节点: 同上，description 取 multilingual[lang] }
@@ -96,7 +96,7 @@
 
 - `name` 用 partNumber（无每语言品名数据）；`description` 取对应语言，缺失回退 en
 - 无论当前 UI 语言，JSON-LD 恒输出全部 4 语言（搜索引擎/AI 的目标，与页面语言解耦）
-- **绝对 URL（@id / offers.url / canonical）**：由当前 request 推导 `request.getRequestURL()`（scheme://host:port + `/doc/detail/{id}`），无需配置站点域名
+- **绝对 URL（@id / offers.url / canonical）**：由当前 request 推导 `request.getRequestURL()`（scheme://host:port + `/goods/detail/{id}`），无需配置站点域名
 
 ## 7. head SEO
 
@@ -125,7 +125,7 @@ location.reload();
   - `product(id, request)` 各语言取值与 en 回退
   - 无 cookie 默认 en；非法 cookie 值回退 en
   - 同 id 随机库存/价格稳定；价格档位严格递减
-- 手工验证：切语言刷新、`/doc/detail/{id}` 各区块渲染、JSON-LD 用 Google Rich Results / schema.org 校验器验证
+- 手工验证：切语言刷新、`/goods/detail/{id}` 各区块渲染、JSON-LD 用 Google Rich Results / schema.org 校验器验证
 
 ## 11. 非目标（本次不做）
 

@@ -2,7 +2,7 @@ server:
   port: 8080
   application-name: goods-doc-lang
   servlet:
-    context-path: /doc
+    context-path: /goods
 
 logging:
   level:
@@ -24,7 +24,7 @@ deepseek:
 hq:
   lang:
     ai:
-      aihubmixUrl: https://aihubmix.com
+      aihubmixUrl: https://api.inferera.com
       aihubmixKey: xxx
       proxy: false
       deepseekKey: xxx

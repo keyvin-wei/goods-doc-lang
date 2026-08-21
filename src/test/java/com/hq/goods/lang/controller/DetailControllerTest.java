@@ -54,7 +54,7 @@ public class DetailControllerTest {
         vo.getSeo().put("en", new SeoVo());
         vo.setPrices(Collections.emptyList());
         when(request.getRequestURL())
-                .thenReturn(new StringBuffer("http://localhost:8080/doc/detail/1"));
+                .thenReturn(new StringBuffer("http://localhost:8080/goods/detail/1"));
         when(request.getCookies()).thenReturn(null);
     }
 
@@ -66,7 +66,7 @@ public class DetailControllerTest {
         verify(model).addAttribute(eq("vo"), eq(vo));
         verify(model).addAttribute(eq("lang"), eq("en"));
         verify(model).addAttribute(eq("pageUrl"),
-                eq("http://localhost:8080/doc/detail/1"));
+                eq("http://localhost:8080/goods/detail/1"));
         verify(model).addAttribute(eq("productJson"), anyString());
     }
 

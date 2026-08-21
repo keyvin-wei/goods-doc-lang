@@ -18,15 +18,15 @@ spring:
 
 deepseek:
   api:
-    key: xxx
     url: https://api.deepseek.com
+    key: xxx
 
 hq:
   lang:
     ai:
+      proxy: false
       aihubmixUrl: https://api.inferera.com
       aihubmixKey: xxx
-      proxy: false
       deepseekKey: xxx
 
 mybatis-plus:

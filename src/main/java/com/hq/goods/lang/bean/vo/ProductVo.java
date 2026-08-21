@@ -23,4 +23,12 @@ public class ProductVo {
     private Map<String, SeoVo> seo;
     private String imageUrl;
     private String datasheetUrl;
+    /** 记录 id（页面「HQ Part #」展示） */
+    private Long id;
+    /** 本地化描述（按当前语言，默认英文） */
+    private String description;
+    /** 库存（id 种子随机，同型号稳定） */
+    private Integer stock;
+    /** 阶梯价格（买越多越便宜） */
+    private List<PriceTier> prices;
 }

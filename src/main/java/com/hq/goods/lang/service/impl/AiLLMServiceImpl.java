@@ -219,7 +219,7 @@ public class AiLLMServiceImpl implements AiLLMService {
 
         if (needTranslate) {
             // 调用AI翻译
-            res = translatorProviderFactory.getProvider().translate("gpt-5.2", contentSys, contentUser);
+            res = translatorProviderFactory.getProvider().translate("gemini-3.1-pro-preview-search", contentSys, contentUser);
         }
         // 异步记录翻译日志（不阻塞主链路）
         final String finalRes = res;

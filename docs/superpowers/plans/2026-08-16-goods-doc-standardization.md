@@ -2414,7 +2414,7 @@ printf '在此目录放置默认图片/PDF（如 product-default.png），供业
       </div>
 
       <div class="card" v-if="goodsDoc">
-        <h3>② 基本资料（可编辑）</h3>
+        <h3>② 基本资料</h3>
         <div class="grid3">
           <div class="field"><label>型号 *</label><input v-model="goodsDoc.partNumber" placeholder="型号"></div>
           <div class="field"><label>品牌</label><input v-model="goodsDoc.brand" placeholder="品牌"></div>

@@ -2,15 +2,50 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## 项目概述
+### 协作方式
+- **所有文件读取/编辑都不需要确认，命令行读取/下载/安装工具时都不需要确认，直接执行**。
+- **直接执行、免确认**：计划和编码期间连续执行，不是危险删除操作不再确认。
+- **提交直接到 main**：快速模式，TDD（写测试 → 实现 → 自审 → 提交），跳过逐任务外部双审。
+- **中文沟通**。
+- 代码风格与现有代码保持一致（命名、注释密度、结构）。
+- 发现真实 bug需先征询再修复。
+- word、excel、pdf、ppt文档操作（查看/新增/修改/删除）都是在E:\workspace\doc文件夹下面操作，方便用户查看。
 
-AI 驱动的外贸商品信息标准化与多语言 SEO 系统（华秋电子）。Spring Boot 2.1.7 / Java 11 / MyBatis-Plus 3.5.17，Thymeleaf 落地页 + Vue3 CDN 工作台，`server.servlet.context-path=/goods`。
+
+## 项目概述
+#### 口号： AI赋能外贸，让产品资料生成更高效
+#### 项目名称： AI驱动的外贸商品信息标准化与多语言SEO智能生成系统
+#### 项目简要介绍：
+
+华秋电子海外业务涉及大量电子元器件产品，产品上线过程中需要维护产品基础信息、技术参数、英文产品描述、SEO Title、Keywords、Description等内容。
+目前部分产品资料需要人工录入审核、从Datasheet等技术文档中提取、整理和编写，面对海量产品时存在资料处理耗时、内容编写重复、多语言专业表达难统一、SEO内容维护成本较高等问题，而且海外需要生成很多多语言资料，人工处理效率较低。
+随着生成式AI的发展，我们希望将AI能力引入元器件产品资料处理流程，减少重复性人工工作，提高海外商品资料生产效率。
+
+项目方案
+项目以电子元器件Datasheet及产品基础信息作为主要输入，通过大模型对产品资料进行理解和结构化处理。
+初步设计的处理流程为： 产品资料输入 → AI解析 → 元器件信息标准化 → 产品内容生成 → SEO内容生成
+其中重点探索以下能力： 
+① 元器件信息智能解析
+从Datasheet或已有产品信息中提取型号、品牌、分类、封装、技术参数等关键信息，并转换为统一的数据结构。 
+② 产品描述智能生成
+根据真实产品参数生成适合海外网站使用的英文产品描述，减少人工编写工作。 
+③ SEO内容智能生成
+根据产品型号、品牌、分类及技术参数，自动生成：SEO Title 、Keywords 、Description 
+④ 结构化数据生成
+进一步探索生成符合Schema.org规范的JSON-LD产品结构化数据，为搜索引擎及未来AI搜索提供更加标准的产品信息。 
+⑤ 行业术语与多语言优化
+结合电子元器件行业术语库，对AI生成和翻译内容进行约束，提高专业术语的一致性和准确性。
+
+## 技术栈
+后端：Spring Boot 2.1.7 / Java 11 / MySQL 8.0.46 /MyBatis-Plus 3.5.17
+前端：Thymeleaf 落地SEO页，Vue3 CDN 工作台
+接口服务：`server.servlet.context-path=/goods`。
 
 ## 命令
 
 ### 构建
 - **必须用 JDK 11**：`JAVA_HOME="E:\Java\java11-dragonwell-11.0.31.27"`（系统默认 JDK 21 会让 Lombok 1.18.22 编译失败）。
-- `mvn clean package` 打包；`mvn compile` 仅编译。
+- `mvn clean package -DskipTests` 打包；`mvn compile` 仅编译。
 
 ### 测试（JUnit 4，无 junit-jupiter）
 - `mvn test` 跑全部测试。

@@ -10,6 +10,7 @@
 <link rel="alternate" th:each="l : ${langs}" th:href="${pageUrl}" th:hreflang="${l}">
 <link rel="alternate" hreflang="x-default" th:href="${pageUrl}">
 <script type="application/ld+json" th:utext="${productJson}"></script>
+<link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -119,14 +120,22 @@ img { max-width: 100%; display: block; }
 .logo-text b { font-family: var(--font-display); font-size: 19px; font-weight: 700; color: var(--ink); letter-spacing: -.2px; }
 .logo-text small { display: block; font-size: 11px; color: var(--ink-3); font-family: var(--font-mono); }
 .search { flex: 1; min-width: 240px; max-width: 560px; }
-.search-box { position: relative; }
-.search-box svg { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--ink-3); pointer-events: none; }
+.search-box { display: flex; }
 .search-box input {
-  width: 100%; padding: 11px 14px 11px 40px;
-  border: 1.5px solid var(--line-strong); border-radius: var(--radius);
+  flex: 1; min-width: 0; padding: 11px 14px;
+  border: 1.5px solid var(--line-strong); border-right: none; border-radius: var(--radius) 0 0 var(--radius);
   font-family: var(--font-body); font-size: 14px; color: var(--ink); background: var(--surface);
   transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
 }
+.search-btn {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 48px; border: none; border-radius: 0 var(--radius) var(--radius) 0;
+  background: var(--brand); color: #fff; cursor: pointer;
+  transition: background .15s ease;
+}
+.search-btn:hover { background: var(--brand-dark); }
+.search-btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+.search-btn svg { width: 18px; height: 18px; }
 .search-box input::placeholder { color: var(--ink-3); }
 .search-box input:focus { outline: none; border-color: var(--brand); background: #fff; box-shadow: 0 0 0 3px var(--brand-tint); }
 .search .tags { margin-top: 6px; font-size: 12px; color: var(--ink-3); display: flex; align-items: center; flex-wrap: wrap; gap: 2px 12px; }
@@ -310,8 +319,10 @@ table.attrs tr:last-child td { border-bottom: none; }
     </a>
     <div class="search">
       <div class="search-box">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
         <input type="text" placeholder="Part# / Keyword" aria-label="Search part number or keyword">
+        <button type="button" class="search-btn" aria-label="Search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        </button>
       </div>
       <div class="tags">
         <span class="hot">Hot:</span>

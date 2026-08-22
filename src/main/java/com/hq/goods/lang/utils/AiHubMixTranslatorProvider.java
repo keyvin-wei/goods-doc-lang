@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * AiHubMix翻译提供商实现
  *
- * <p>基于gpt-5.2模型，通过HttpUtil.postAihubmix发送请求。</p>
+ * <p>基于gpt-5.5模型，通过HttpUtil.postAihubmix发送请求。</p>
  *
  * @author ai-assistant
  * @since 2026/06/16
@@ -28,7 +28,7 @@ public class AiHubMixTranslatorProvider implements TranslatorProvider {
         params.put("model", model);
         params.put("max_completion_tokens", 3000);
         params.put("temperature", 0.1);
-        params.put("top_p", 0.2);
+        // params.put("top_p", 0.2);
         params.put("stream", false);
 
         List<AiMessageReq> messages = new ArrayList<>();

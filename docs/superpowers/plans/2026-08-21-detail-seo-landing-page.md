@@ -256,7 +256,7 @@ import java.util.Arrays;
 import java.util.Random;
 ```
 
-2) 类内新增常量（放在 `private static final String MODEL = "gpt-5.2";` 附近）：
+2) 类内新增常量（放在 `private static final String MODEL = "gpt-5.5";` 附近）：
 ```java
     /** 落地页支持语言（预留可扩展） */
     private static final List<String> SUPPORTED_LANGS = Arrays.asList("en", "zh", "ja", "ru");
@@ -786,7 +786,7 @@ Expected: `BUILD FAILURE`（`detail.html` 不存在）
 
 <!-- 顶栏 -->
 <div class="top-bar">
-    <span>support@nextpcb.com</span>
+    <span>support@mall.com</span>
     <div class="util">
         <select id="langSelect" onchange="switchLang(this.value)" title="Language">
             <option th:each="l : ${langs}" th:value="${l}" th:text="${langLabels[l]}" th:selected="${l == lang}"></option>
@@ -912,7 +912,7 @@ Expected: `BUILD FAILURE`（`detail.html` 不存在）
 
 <!-- 页脚 -->
 <div class="footer">
-    HQ Online &copy; 2026 &nbsp;|&nbsp; support@nextpcb.com &nbsp;|&nbsp; All prices in USD, subject to change
+    HQ Online &copy; 2026 &nbsp;|&nbsp; support@mall.com &nbsp;|&nbsp; All prices in USD, subject to change
 </div>
 
 <script>

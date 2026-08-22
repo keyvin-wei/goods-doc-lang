@@ -1703,7 +1703,7 @@ import java.util.stream.Collectors;
 @Service
 public class GoodsDocServiceImpl implements GoodsDocService {
 
-    private static final String MODEL = "gpt-5.2";
+    private static final String MODEL = "gpt-5.5";
     private static final int RAG_TOP_K = 3;
 
     @Autowired

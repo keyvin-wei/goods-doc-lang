@@ -60,7 +60,7 @@ import java.util.stream.Collectors;
 @Service
 public class GoodsDocServiceImpl implements GoodsDocService {
 
-    private static final String MODEL = "gpt-5.2";
+    private static final String MODEL = "gpt-5.5";
     private static final int RAG_TOP_K = 3;
     /** 落地页支持语言（预留可扩展） */
     private static final List<String> SUPPORTED_LANGS = Arrays.asList("en", "zh", "ja", "ru");

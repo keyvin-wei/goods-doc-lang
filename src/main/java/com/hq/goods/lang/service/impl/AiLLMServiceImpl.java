@@ -70,7 +70,7 @@ public class AiLLMServiceImpl implements AiLLMService {
         scoreVo.setTemp(dto.getTemp());
         try {
             JSONObject params = new JSONObject();
-            params.put("model", "gemini-3.1-pro-preview-search");
+            params.put("model", "gpt-5.5");
             params.put("response_format", Constants.JSON_OBJ);
             params.put("max_tokens", 40000);
             params.put("temperature", 0.1);
@@ -219,7 +219,7 @@ public class AiLLMServiceImpl implements AiLLMService {
 
         if (needTranslate) {
             // 调用AI翻译
-            res = translatorProviderFactory.getProvider().translate("gemini-3.1-pro-preview-search", contentSys, contentUser);
+            res = translatorProviderFactory.getProvider().translate("gpt-5.5", contentSys, contentUser);
         }
         // 异步记录翻译日志（不阻塞主链路）
         final String finalRes = res;

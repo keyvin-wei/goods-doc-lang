@@ -13,7 +13,7 @@ public interface TranslatorProvider {
     /**
      * 执行翻译请求
      *
-     * @param model        模型名称，如 gpt-5.2、deepseek-chat
+     * @param model        模型名称，如 gpt-5.5、deepseek-chat
      * @param systemPrompt System Prompt
      * @param userPrompt   User Prompt
      * @return AI翻译结果文本

@@ -6,7 +6,7 @@ server:
 
 logging:
   level:
-    com.hq.goods.lang.utils: info
+    com.hq.goods.lang: debug
 
 spring:
   datasource:

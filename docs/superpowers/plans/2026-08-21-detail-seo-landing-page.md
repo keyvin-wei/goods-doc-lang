@@ -4,7 +4,7 @@
 
 **Goal:** 新增客户可见的 SEO 落地页 `GET /goods/detail/{id}`，服务端渲染（Thymeleaf）后台生成的元器件资料，并输出 Schema.org `Product` JSON-LD 多语言（en/zh/ja/ru）结构化数据。
 
-**Architecture:** 后台现有 `hq_goods_doc_record` → `GoodsDocService` 提供 `product(id, request)`（从 cookie `lang` 决定语言、按 id 种子生成稳定随机库存/阶梯价）→ 新增 `DetailController`（`@Controller`）渲染 `templates/detail.html`（fastjson 序列化 JSON-LD 进 model）。页面布局对照 `用户端查看页面-seo落地页.jpg`（HQ Online 元器件商城风格）。
+**Architecture:** 后台现有 `hq_goods_doc_record` → `GoodsDocService` 提供 `product(id, request)`（从 cookie `lang` 决定语言、按 id 种子生成稳定随机库存/阶梯价）→ 新增 `DetailController`（`@Controller`）渲染 `templates/detail.html`（fastjson 序列化 JSON-LD 进 model）。页面布局对照 `用户端查看页面-seo落地页.jpg`（HQ mall 元器件商城风格）。
 
 **Tech Stack:** Spring Boot 2.1.7 · Thymeleaf（版本随 starter-parent）· Java 11 · MyBatis-Plus 3.5.17 · fastjson 2.0.34（`com.alibaba.fastjson`）· JUnit 4.12 · Mockito 2.23
 
@@ -796,7 +796,7 @@ Expected: `BUILD FAILURE`（`detail.html` 不存在）
 </div>
 
 <div class="header">
-    <div class="logo">HQ online<small>www.hqonline.com</small></div>
+    <div class="logo">HQ mall<small>www.mall.com</small></div>
     <div class="search">
         <input type="text" placeholder="Part#/Keyword">
         <div class="tags">
@@ -912,7 +912,7 @@ Expected: `BUILD FAILURE`（`detail.html` 不存在）
 
 <!-- 页脚 -->
 <div class="footer">
-    HQ Online &copy; 2026 &nbsp;|&nbsp; support@mall.com &nbsp;|&nbsp; All prices in USD, subject to change
+    HQ mall &copy; 2026 &nbsp;|&nbsp; support@mall.com &nbsp;|&nbsp; All prices in USD, subject to change
 </div>
 
 <script>

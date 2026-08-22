@@ -9,7 +9,7 @@
 后台每天把外贸元器件资料（型号解析 → 描述生成 → 多语言 + SEO）沉淀到 `hq_goods_doc_record`。本文档设计一个**前台用户可见的 SEO 落地页**：
 
 - URL：`http://localhost:8080/goods/detail/{id}`（`context-path=/goods`，模板视图 `/detail/{id}`）
-- 页面布局参考：`docs/superpowers/diagrams/用户端查看页面-seo落地页.jpg`（HQ Online 风格元器件商城产品详情页）
+- 页面布局参考：`docs/superpowers/diagrams/用户端查看页面-seo落地页.jpg`（HQ mall 风格元器件商城产品详情页）
 - 把后台生成的型号资料渲染成 HTML，并输出 **Schema.org `Product` JSON-LD 多语言结构化数据**，为搜索引擎及未来 AI 搜索提供标准产品信息，提高 AI 推荐曝光
 - 电商区块（库存/价格/购物车）无真实数据：以 **id 为随机种子生成稳定随机值**，仅展示、不做功能
 
@@ -52,7 +52,7 @@
 
 | 区块 | 实现 |
 |---|---|
-| 顶栏 | 写死静态：HQ online Logo + 搜索框（占位 `Part#/Keyword` + 热门词 RP2350A 等）+ 导航（Products / BOM Tool / Request Quote / PCB Service / About Us / Contact Us / Blog）+ 邮箱 + 购物车图标(20)。**全无功能** |
+| 顶栏 | 写死静态：HQ mall Logo + 搜索框（占位 `Part#/Keyword` + 热门词 RP2350A 等）+ 导航（Products / BOM Tool / Request Quote / PCB Service / About Us / Contact Us / Blog）+ 邮箱 + 购物车图标(20)。**全无功能** |
 | 语言切换 | 顶栏右侧（用户图标旁）下拉框：English / 中文 / 日本語 / Русский；onchange → 写 cookie `lang` → `location.reload()` 整页重渲染 |
 | 面包屑 | `Home > {category} > {subcategory 有则显示，无则省略} > {partNumber}` |
 | 主区左栏 | `images/default/demo1.png / demo2.png / demo3.png` 三图 + 缩略图切换 + 「Images are for reference only」；字段：Mfr Part #=partNumber、Manufacturer=brand、HQ Part #=记录id、Package=packageType、Lead Time=写死 Ship immediately、Description=本地化描述、Customer # 输入框(无功能)、Datasheet 链接(datasheetUrl 有则显示，无则隐藏) |
